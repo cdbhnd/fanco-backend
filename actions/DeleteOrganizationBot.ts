@@ -8,7 +8,7 @@ import * as Password from "../utility/Password";
 import { ActionBase } from "./ActionBase";
 import { ActionContext } from "./ActionBase";
 
-export class Action extends ActionBase<Entities.IBot> {
+export class Action extends ActionBase<boolean> {
     private botRepository: Repositories.IBotRepository;
     private organizationRepository: Repositories.IOrganizationRepository;
     private adminRepository: Repositories.IAdminUserRepository;
@@ -20,12 +20,13 @@ export class Action extends ActionBase<Entities.IBot> {
         this.adminRepository = kernel.get<Repositories.IAdminUserRepository>(Types.IAdminUserRepository);
     };
 
-    public async execute(context): Promise<Entities.IBot> {
-        let bot: Entities.IBot =  (await this.botRepository.find({
-            id: context.params.botId,
-        })).shift();
+    public async execute(context): Promise<boolean> {
+        let bot: Entities.IBot = (await this.botRepository.find({ id: context.params.botId })).shift();
 
-        return bot;
+        if (!bot) {
+            return false;
+        }
+        return await this.botRepository.delete(bot);
     }
 
     protected async onActionExecuting(context: ActionContext): Promise<ActionContext> {

@@ -1,6 +1,7 @@
 import { CreateBot } from "../../actions/";
 import { GetOrganizationBots } from "../../actions/";
 import { GetOrganizationBot } from "../../actions/";
+import { DeleteOrganizationBot } from "../../actions/";
 import { ExceptionTypes } from "../../infrastructure/exceptions/";
 import { JsonController, Param, Body, Get, Post, Put, Delete, Req, Res, HttpCode, UseBefore } from "routing-controllers";
 import { ActionBase } from "../../actions/";
@@ -50,7 +51,7 @@ export class OrganizationController {
     @HttpCode(200)
     @HttpError(400, ExceptionTypes.ValidationException)
     @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
-    public async getBoxes(@Param("userId") userId: string, @Param("botId") botId: string, @Param("orgName") orgName: string) {
+    public async getOrganizationBot( @Param("userId") userId: string, @Param("botId") botId: string, @Param("orgName") orgName: string) {
         let getOrganizationBot = new GetOrganizationBot.Action();
         let actionContext = new ActionContext();
         actionContext.params = { id: userId };
@@ -62,4 +63,19 @@ export class OrganizationController {
         return bot;
     }
 
+    @Delete("/organization/:orgName/bot/:botId")
+    @UseBefore(AuthMiddleware)
+    @HttpCode(200)
+    @HttpError(400, ExceptionTypes.ValidationException)
+    @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
+    public async deleteOrganizationBot( @Param("userId") userId: string, @Param("botId") botId: string, @Param("orgName") orgName: string) {
+        let deleteOrganizationBot = new DeleteOrganizationBot.Action();
+        let actionContext = new ActionContext();
+        actionContext.params = { id: userId };
+        // tslint:disable-next-line:no-string-literal
+        actionContext.params["organization"] = orgName;
+        // tslint:disable-next-line:no-string-literal
+        actionContext.params["botId"] = botId;
+        return await deleteOrganizationBot.run(actionContext);
+    }
 }
