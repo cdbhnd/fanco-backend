@@ -1,0 +1,22 @@
+{
+  "basePath": "/",
+  "host": "link to host",
+  "info": {
+    "description": "description",
+    "title": "title",
+    "version": "1.0"
+  },
+  "paths": {
+  },
+  "produces": [
+    "application/xml",
+    "application/json",
+    "application/octet-stream",
+    "text/plain"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0"
+}

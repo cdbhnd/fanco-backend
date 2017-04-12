@@ -1,0 +1,51 @@
+{
+  "name": "pbox-backend",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.15.3",
+    "bcryptjs": "^2.4.0",
+    "body-parser": "^1.16.0",
+    "config": "^1.24.0",
+    "express": "^4.14.0",
+    "form-data": "^2.1.2",
+    "indicative": "^2.2.1",
+    "inversify": "^2.0.0-rc.10",
+    "jwt-simple": "^0.5.1",
+    "moment-timezone": "^0.5.10",
+    "mongodb": "^2.2.15",
+    "multer": "^1.2.0",
+    "node-schedule": "^1.2.0",
+    "reflect-metadata": "^0.1.8",
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1",
+    "routing-controllers": "^0.6.6",
+    "serve-static": "^1.11.1",
+    "winston": "^2.3.1",
+    "winston-loggly-bulk": "^1.4.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-sequence": "^0.4.6",
+    "gulp-tslint": "^7.1.0",
+    "nodemon": "^1.11.0",
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "codebehind",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": ""
+}
