@@ -17,5 +17,6 @@ kernel.bind<ILogger>(Types.Logger).to(Logger).inSingletonScope();
 
 // variable bindings
 kernel.bind<string>("entityName").toConstantValue("admin_users").whenInjectedInto(DB.AdminUsers);
+kernel.bind<string>("entityName").toConstantValue("organizations").whenInjectedInto(DB.Organizations);
 
 export default kernel;
