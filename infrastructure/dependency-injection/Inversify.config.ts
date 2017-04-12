@@ -10,8 +10,8 @@ import {ILogger} from "../logger/ILogger";
 
 let kernel = new Kernel();
 
-kernel.bind<Repositories.ISomeRepository>(Types.SomeRepository).to(DB.SomeDBClass);
-
+kernel.bind<Repositories.IAdminUserRepository>(Types.IAdminUserRepository).to(DB.AdminUsers);
+kernel.bind<string>("entityName").toConstantValue("admin_users").whenInjectedInto(DB.AdminUsers);
 // utility
 kernel.bind<ILogger>(Types.Logger).to(Logger).inSingletonScope();
 

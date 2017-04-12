@@ -1,1 +1,1 @@
-export * from "./SomeDBClass";
+export * from "./AdminUsers";

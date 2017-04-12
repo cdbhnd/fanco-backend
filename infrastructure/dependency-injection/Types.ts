@@ -1,5 +1,5 @@
 let Types = {
-    SomeRepository: Symbol("SomeRepository"),
+    IAdminUserRepository: Symbol("IAdminUserRepository"),
     Logger: Symbol("Logger"),
 };
 

@@ -1,2 +1,11 @@
 {
+    "secret": "codebehind",
+    "password": {
+        "saltRounds": 10
+    },
+    "mongoDbSettings": {
+        "dbUser": "funcoDbAdmin",
+        "dbPassword": "adminadmin"
+    }
 }
+
