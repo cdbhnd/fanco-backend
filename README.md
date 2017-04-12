@@ -1,4 +1,4 @@
-# pbox-backend
+# fanco-backend
 
 ## Install typescript and typings globally  
 `npm install typescript -g`  
