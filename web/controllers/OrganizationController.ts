@@ -1,5 +1,6 @@
 import { CreateBot } from "../../actions/";
 import { GetOrganizationBots } from "../../actions/";
+import { GetOrganizationBot } from "../../actions/";
 import { ExceptionTypes } from "../../infrastructure/exceptions/";
 import { JsonController, Param, Body, Get, Post, Put, Delete, Req, Res, HttpCode, UseBefore } from "routing-controllers";
 import { ActionBase } from "../../actions/";
@@ -33,22 +34,32 @@ export class OrganizationController {
     @UseBefore(AuthMiddleware)
     @HttpCode(200)
     @HttpError(400, ExceptionTypes.ValidationException)
-    public async getOrganizationBots(@Param("userId") userId: string, @Param("orgName") orgName: string) {
+    @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
+    public async getOrganizationBots( @Param("userId") userId: string, @Param("orgName") orgName: string) {
         let getOrganizationBots = new GetOrganizationBots.Action();
         let actionContext = new ActionContext();
         actionContext.params = { id: userId };
         // tslint:disable-next-line:no-string-literal
         actionContext.params["organization"] = orgName;
-        let boxes = await getOrganizationBots.run(actionContext);
-        return boxes;
+        let bots = await getOrganizationBots.run(actionContext);
+        return bots;
     }
 
-    // @Get("/organization/:orgName/bot/:botId")
-    // @UseBefore(AuthMiddleware)
-    // @HttpCode(200)
-    // @HttpError(400, ExceptionTypes.ValidationException)
-    // public async getBoxes( @Req() request: Request, @Param("userId") userId: string) {
-
-    // }
+    @Get("/organization/:orgName/bot/:botId")
+    @UseBefore(AuthMiddleware)
+    @HttpCode(200)
+    @HttpError(400, ExceptionTypes.ValidationException)
+    @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
+    public async getBoxes(@Param("userId") userId: string, @Param("botId") botId: string, @Param("orgName") orgName: string) {
+        let getOrganizationBot = new GetOrganizationBot.Action();
+        let actionContext = new ActionContext();
+        actionContext.params = { id: userId };
+        // tslint:disable-next-line:no-string-literal
+        actionContext.params["organization"] = orgName;
+        // tslint:disable-next-line:no-string-literal
+        actionContext.params["botId"] = botId;
+        let bot = await getOrganizationBot.run(actionContext);
+        return bot;
+    }
 
 }
