@@ -4,6 +4,6 @@ export interface IAdminUser {
     lastName: string;
     password: string;
     email: string;
-    organizationId: number;
+    organizationId: string;
     token?: string;
 }
