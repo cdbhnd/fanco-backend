@@ -13,7 +13,9 @@ export class OrganizationController {
 
     @Post("/organization/:orgName/bot")
     @HttpCode(200)
+    @UseBefore(AuthMiddleware)
     @HttpError(401, ExceptionTypes.InvalidCredentialsException)
+    @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
     public async createBot(@Param("orgName") orgName: string, @Param("userId") userId: string, @Body() userSubmitedParams: any) {
         let createBotAction = new CreateBot.Action();
         let actionContext = new ActionContext();

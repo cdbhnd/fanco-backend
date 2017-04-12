@@ -1,4 +1,5 @@
 export interface IBot {
+    id: string;
     service: string;
     token: string;
     organizationId: string;
