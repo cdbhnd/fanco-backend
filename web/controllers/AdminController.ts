@@ -1,4 +1,4 @@
-import {UserLogin} from "../../actions/";
+import {AdminLogin} from "../../actions/";
 import {ExceptionTypes} from "../../infrastructure/exceptions/";
 import {JsonController, Param, Body, Get, Post, Put, Delete, Req, Res, HttpCode, UseBefore} from "routing-controllers";
 import {ActionBase} from "../../actions/";
@@ -11,14 +11,14 @@ import {HttpError} from "../decorators/httpError";
 @JsonController()
 export class UserController {
 
-    @Post("/users/login")
+    @Post("/admin/login")
     @HttpCode(200)
     @HttpError(401, ExceptionTypes.InvalidCredentialsException)
     public async login( @Body() userSubmitedParams: any) {
-        let userLoginAction = new UserLogin.Action();
+        let adminLoginAction = new AdminLogin.Action();
         let actionContext = new ActionContext();
         actionContext.params = userSubmitedParams;
-        let adminUser = await userLoginAction.run(actionContext);
+        let adminUser = await adminLoginAction.run(actionContext);
         let secret: string = String(config.get("secret"));
         adminUser.token = jwt.encode({ authUserId: adminUser.id }, secret);
         return adminUser;

@@ -1,2 +1,2 @@
 import  "./PingController";
-import "./UserController";
+import "./AdminController";
