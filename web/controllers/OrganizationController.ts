@@ -1,12 +1,13 @@
-import {CreateBot} from "../../actions/";
-import {ExceptionTypes} from "../../infrastructure/exceptions/";
-import {JsonController, Param, Body, Get, Post, Put, Delete, Req, Res, HttpCode, UseBefore} from "routing-controllers";
-import {ActionBase} from "../../actions/";
-import {ActionContext} from "../../actions";
-import {AuthMiddleware} from  "../middleware/authMiddleware";
+import { CreateBot } from "../../actions/";
+import { GetOrganizationBots } from "../../actions/";
+import { ExceptionTypes } from "../../infrastructure/exceptions/";
+import { JsonController, Param, Body, Get, Post, Put, Delete, Req, Res, HttpCode, UseBefore } from "routing-controllers";
+import { ActionBase } from "../../actions/";
+import { ActionContext } from "../../actions";
+import { AuthMiddleware } from "../middleware/authMiddleware";
 import * as jwt from "jwt-simple";
 import * as config from "config";
-import {HttpError} from "../decorators/httpError";
+import { HttpError } from "../decorators/httpError";
 
 @JsonController()
 export class OrganizationController {
@@ -16,7 +17,7 @@ export class OrganizationController {
     @UseBefore(AuthMiddleware)
     @HttpError(401, ExceptionTypes.InvalidCredentialsException)
     @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
-    public async createBot(@Param("orgName") orgName: string, @Param("userId") userId: string, @Body() userSubmitedParams: any) {
+    public async createBot( @Param("orgName") orgName: string, @Param("userId") userId: string, @Body() userSubmitedParams: any) {
         let createBotAction = new CreateBot.Action();
         let actionContext = new ActionContext();
         actionContext.params = userSubmitedParams;
@@ -27,4 +28,27 @@ export class OrganizationController {
         let createdBot = await createBotAction.run(actionContext);
         return createdBot;
     }
+
+    @Get("/organization/:orgName/bots")
+    @UseBefore(AuthMiddleware)
+    @HttpCode(200)
+    @HttpError(400, ExceptionTypes.ValidationException)
+    public async getOrganizationBots(@Param("userId") userId: string, @Param("orgName") orgName: string) {
+        let getOrganizationBots = new GetOrganizationBots.Action();
+        let actionContext = new ActionContext();
+        actionContext.params = { id: userId };
+        // tslint:disable-next-line:no-string-literal
+        actionContext.params["organization"] = orgName;
+        let boxes = await getOrganizationBots.run(actionContext);
+        return boxes;
+    }
+
+    // @Get("/organization/:orgName/bot/:botId")
+    // @UseBefore(AuthMiddleware)
+    // @HttpCode(200)
+    // @HttpError(400, ExceptionTypes.ValidationException)
+    // public async getBoxes( @Req() request: Request, @Param("userId") userId: string) {
+
+    // }
+
 }
