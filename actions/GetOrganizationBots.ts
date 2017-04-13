@@ -21,7 +21,7 @@ export class Action extends ActionBase<Entities.IBot[]> {
     };
 
     public async execute(context): Promise<Entities.IBot[]> {
-        let organization: Entities.IOrganization = (await this.organizationRepository.find({ name: context.params.organization })).shift();
+        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization })).shift();
 
         let bots: Entities.IBot[] =  await this.botRepository.find({
             organizationId: organization.oId,
@@ -31,7 +31,7 @@ export class Action extends ActionBase<Entities.IBot[]> {
     }
 
     protected async onActionExecuting(context: ActionContext): Promise<ActionContext> {
-        let organization: Entities.IOrganization = (await this.organizationRepository.find({ name: context.params.organization })).shift();
+        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization })).shift();
 
         if (typeof (organization) == "undefined") {
             throw new Exceptions.EntityNotFoundException("Organization", context.params.organization);

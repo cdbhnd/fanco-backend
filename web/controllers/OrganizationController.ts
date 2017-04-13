@@ -1,4 +1,4 @@
-import { CreateBot } from "../../actions/";
+import { CreateOrganizationBot } from "../../actions/";
 import { GetOrganizationBots } from "../../actions/";
 import { GetOrganizationBot } from "../../actions/";
 import { DeleteOrganizationBot } from "../../actions/";
@@ -14,49 +14,49 @@ import { HttpError } from "../decorators/httpError";
 @JsonController()
 export class OrganizationController {
 
-    @Post("/organization/:orgName/bot")
+    @Post("/organization/:orgId/bot")
     @HttpCode(200)
     @UseBefore(AuthMiddleware)
     @HttpError(401, ExceptionTypes.InvalidCredentialsException)
     @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
-    public async createBot( @Param("orgName") orgName: string, @Param("userId") userId: string, @Body() userSubmitedParams: any) {
-        let createBotAction = new CreateBot.Action();
+    public async createBot( @Param("orgId") orgId: string, @Param("userId") userId: string, @Body() userSubmitedParams: any) {
+        let createBotAction = new CreateOrganizationBot.Action();
         let actionContext = new ActionContext();
         actionContext.params = userSubmitedParams;
         // tslint:disable-next-line:no-string-literal
-        actionContext.params["organization"] = orgName;
+        actionContext.params["organization"] = orgId;
         // tslint:disable-next-line:no-string-literal
         actionContext.params["userId"] = userId;
         let createdBot = await createBotAction.run(actionContext);
         return createdBot;
     }
 
-    @Get("/organization/:orgName/bots")
+    @Get("/organization/:orgId/bots")
     @UseBefore(AuthMiddleware)
     @HttpCode(200)
     @HttpError(400, ExceptionTypes.ValidationException)
     @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
-    public async getOrganizationBots( @Param("userId") userId: string, @Param("orgName") orgName: string) {
+    public async getOrganizationBots( @Param("userId") userId: string, @Param("orgId") orgId: string) {
         let getOrganizationBots = new GetOrganizationBots.Action();
         let actionContext = new ActionContext();
         actionContext.params = { id: userId };
         // tslint:disable-next-line:no-string-literal
-        actionContext.params["organization"] = orgName;
+        actionContext.params["organization"] = orgId;
         let bots = await getOrganizationBots.run(actionContext);
         return bots;
     }
 
-    @Get("/organization/:orgName/bot/:botId")
+    @Get("/organization/:orgId/bots/:botId")
     @UseBefore(AuthMiddleware)
     @HttpCode(200)
     @HttpError(400, ExceptionTypes.ValidationException)
     @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
-    public async getOrganizationBot( @Param("userId") userId: string, @Param("botId") botId: string, @Param("orgName") orgName: string) {
+    public async getOrganizationBot( @Param("userId") userId: string, @Param("botId") botId: string, @Param("orgId") orgId: string) {
         let getOrganizationBot = new GetOrganizationBot.Action();
         let actionContext = new ActionContext();
         actionContext.params = { id: userId };
         // tslint:disable-next-line:no-string-literal
-        actionContext.params["organization"] = orgName;
+        actionContext.params["organization"] = orgId;
         // tslint:disable-next-line:no-string-literal
         actionContext.params["botId"] = botId;
         let bot = await getOrganizationBot.run(actionContext);
