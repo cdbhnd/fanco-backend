@@ -6,5 +6,6 @@
     "mongoDbSettings": {
         "dbUser": "funcoDbAdmin",
         "dbPassword": "adminadmin"
-    }
+    },
+    "baseUrl": "https://test-viber-bot.herokuapp.com"
 }
