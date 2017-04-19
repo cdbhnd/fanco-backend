@@ -17,13 +17,13 @@ export class EventController {
     @HttpError(401, ExceptionTypes.InvalidCredentialsException)
     @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
     public async getEvents( @Param("orgId") orgId: string, @Param("userId") userId: string) {
-        let getOrganizationBots = new actions.GetEvents.Action();
+        let getOrgEventsAction = new actions.GetEvents.Action();
         let actionContext = new ActionContext();
         actionContext.params = {
             id: userId,
             organization: orgId,
         };
-        return await getOrganizationBots.run(actionContext);
+        return await getOrgEventsAction.run(actionContext);
     }
 
     @Post("/organization/:orgId/events")
@@ -32,6 +32,11 @@ export class EventController {
     @HttpError(400, ExceptionTypes.ValidationException)
     @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
     public async createEvent( @Param("userId") userId: string, @Param("orgId") orgId: string, @Body() userSubmitedParams: any) {
-        return null;
+        let createEventAction = new actions.CreateEvent.Action();
+        let actionContext = new ActionContext();
+        actionContext.params = userSubmitedParams;
+        actionContext.params.userId = userId;
+        actionContext.params.organization = orgId;
+        return await createEventAction.run(actionContext);
     }
 }
