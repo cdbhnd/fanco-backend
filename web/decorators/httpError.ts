@@ -15,7 +15,7 @@ export function HttpError(errorCode: number, exception: string) {
                 .then((data) => {
                     return data;
                 }).catch((err) => {
-
+                    console.log(err);
                     // tslint:disable-next-line:no-string-literal
                     let response = global["response_reference"];
 
