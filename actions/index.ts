@@ -5,5 +5,5 @@ import * as CreateOrganizationBot from "./CreateOrganizationBot";
 import * as GetOrganizationBots from "./GetOrganizationBots";
 import * as GetOrganizationBot from "./GetOrganizationBot";
 import * as DeleteOrganizationBot from "./DeleteOrganizationBot";
-import * as InitializeViberBots from "./InitializeViberBots";
-export {ActionContext, ActionBase, AdminLogin, CreateOrganizationBot, GetOrganizationBots, GetOrganizationBot, DeleteOrganizationBot, InitializeViberBots};
+import * as InitializeAllBots from "./InitializeAllBots";
+export {ActionContext, ActionBase, AdminLogin, CreateOrganizationBot, GetOrganizationBots, GetOrganizationBot, DeleteOrganizationBot, InitializeAllBots};

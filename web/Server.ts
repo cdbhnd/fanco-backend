@@ -7,8 +7,10 @@ import { logMiddleware } from "./middleware/logMiddleware";
 import { createExpressServer, useExpressServer } from "routing-controllers";
 import { text, ParsedAsText } from "body-parser";
 import bodyParser = require("body-parser");
-import { InitializeViberBots } from "../actions/";
+import { InitializeAllBots } from "../actions/";
 import { ActionContext } from "../actions";
+import * as Services from "../services/index";
+import { Types, kernel } from "../infrastructure/dependency-injection/";
 
 export class Server {
     private app: express.Application;
@@ -26,11 +28,18 @@ export class Server {
     }
 
     private async initialize() {
-        let initializeViberBots = new InitializeViberBots.Action();
+        let initializeAllBots = new InitializeAllBots.Action();
         let actionContext = new ActionContext();
-        actionContext.params = { app: this.app };
-        await initializeViberBots.run(actionContext);
+        await initializeAllBots.run(actionContext);
 
+        let viberService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
+
+        this.app.use("/viber/:botName", (req, res, next) => {
+            let botName = req.params.botName;
+            let bot = viberService.getViberBotObject(botName);
+            let callback = bot.middleware();
+            return callback(req, res, next);
+        });
         this.app.use(corsMiddleware);
         this.app.use(queryParserMiddleware);
         this.app.use(express.static("assets"));

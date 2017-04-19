@@ -14,6 +14,8 @@ kernel.bind<Repositories.IAdminUserRepository>(Types.IAdminUserRepository).to(DB
 kernel.bind<Repositories.IBotRepository>(Types.IBotRepository).to(DB.Bots);
 kernel.bind<Repositories.IOrganizationRepository>(Types.IOrganizationRepository).to(DB.Organizations);
 
+kernel.bind<Services.IViberBotService>(Types.IViberBotService).to(Services.ViberBotService).inSingletonScope();
+
 // utility
 kernel.bind<ILogger>(Types.Logger).to(Logger).inSingletonScope();
 
