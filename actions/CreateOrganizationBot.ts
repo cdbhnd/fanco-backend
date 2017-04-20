@@ -28,7 +28,8 @@ export class Action extends ActionBase<Entities.IBot> {
 
         let bot: Entities.IBot =  await this.botRepository.create({
             service: context.params.service,
-            name: organization.name,
+            name: !!context.params.name ? context.params.name : organization.name,
+            avatar: !!context.params.avatar ? context.params.avatar : this.viberBotService.getViberAvatar(),
             token: context.params.token,
             organizationId: organization.oId,
             subscribers: [],
