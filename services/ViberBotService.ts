@@ -15,15 +15,15 @@ const TextMessage = require("viber-bot").Message.Text;
 @injectable()
 export class ViberBotService implements IViberBotService {
 
-    private botRepository: Repositories.IBotRepository;
     private viberBotObjects = [];
 
     constructor() {
-        this.botRepository = kernel.get<Repositories.IBotRepository>(Types.IBotRepository);
+        // not empty
     };
 
     public async initializeAllBots(): Promise<any> {
-        let domainViberBots: Entities.IBot[] = await this.botRepository.find({ service: "Viber" });
+        let botRepository = this.getBotRepository();
+        let domainViberBots: Entities.IBot[] = await botRepository.find({ service: "Viber" });
 
         for (let i = 0; i < domainViberBots.length; i++) {
             try {
@@ -36,7 +36,8 @@ export class ViberBotService implements IViberBotService {
     }
 
     public async initializeBotByName(botName: string): Promise<any> {
-        let domainViberBot: Entities.IBot = (await this.botRepository.find({ name: botName })).shift();
+        let botRepository = this.getBotRepository();
+        let domainViberBot: Entities.IBot = (await botRepository.find({ name: botName })).shift();
         console.log("Viber bot found " + domainViberBot.name);
         this.initializeBot(domainViberBot);
     }
@@ -52,7 +53,8 @@ export class ViberBotService implements IViberBotService {
             for (let i in this.viberBotObjects) {
                 if (this.viberBotObjects.hasOwnProperty(i)) {
                     let vBot: any = this.viberBotObjects[i];
-                    let bot: Entities.IBot = (await this.botRepository.find({ name: i })).shift();
+                    let botRepository = this.getBotRepository();
+                    let bot: Entities.IBot = (await botRepository.find({ name: i })).shift();
                     if (bot.organizationId != event.organization) {
                         continue;
                     }
@@ -90,34 +92,52 @@ export class ViberBotService implements IViberBotService {
             }
         });
 
+        bot.onTextMessage(/^schedule$/i, async (message, response) => {
+            let scheduleRepo = this.getScheduleRepository();
+            let currentTimestamp = (new Date()).toISOString();
+            let schedules = (await scheduleRepo.find({ timestamp: { $gt: currentTimestamp } })).slice(0, 3);
+
+            for (let i = 0; i < schedules.length; i++) {
+                await this.publishEvent({
+                    type: "message",
+                    content: schedules[i].timestamp + " - " + schedules[i].description,
+                    organization: domainViberBot.organizationId,
+                    timestamp: schedules[i].timestamp,
+                });
+            }
+        });
+
         bot.onTextMessage(/^bye|Bye$/i, async (message, response) => {
             await this.removeSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
             response.send(new TextMessage(`Farewell ${response.userProfile.name}. I ll be waiting for you to come back`));
         });
         console.log("Viber bot event added");
 
-        bot.setWebhook(config.get("baseUrl") + "/viber/" + domainViberBot.name);
+        // bot.setWebhook(config.get("baseUrl") + "/viber/" + domainViberBot.name);
+        bot.setWebhook("");
 
         console.log("Webhook configured");
     }
 
     private async addSubscriber(botName: string, subscriberId: string, subscriberName: string): Promise<boolean> {
-        let domainViberBot: Entities.IBot = (await this.botRepository.find({ name: botName })).shift();
+        let botRepository = this.getBotRepository();
+        let domainViberBot: Entities.IBot = (await botRepository.find({ name: botName })).shift();
         if (!this.subscriberExist(domainViberBot, subscriberId)) {
             domainViberBot.subscribers.push({ id: subscriberId, name: subscriberName });
-            await this.botRepository.update(domainViberBot);
+            await botRepository.update(domainViberBot);
             return true;
         }
         return false;
     }
 
     private async removeSubscriber(botName: string, subscriberId: string, subscriberName: string): Promise<boolean> {
-        let domainViberBot: Entities.IBot = (await this.botRepository.find({ name: botName })).shift();
+        let botRepository = this.getBotRepository();
+        let domainViberBot: Entities.IBot = (await botRepository.find({ name: botName })).shift();
         if (!!domainViberBot.subscribers) {
             for (let i = 0; i < domainViberBot.subscribers.length; i++) {
                 if (domainViberBot.subscribers[i].id == subscriberId) {
                     domainViberBot.subscribers.splice(i, 1);
-                    await this.botRepository.update(domainViberBot);
+                    await botRepository.update(domainViberBot);
                     return true;
                 }
             }
@@ -134,5 +154,13 @@ export class ViberBotService implements IViberBotService {
             }
         }
         return false;
+    }
+
+    private getScheduleRepository(): Repositories.IScheduleRepository {
+        return kernel.get<Repositories.IScheduleRepository>(Types.IScheduleRepository);
+    }
+
+    private getBotRepository(): Repositories.IBotRepository {
+        return kernel.get<Repositories.IBotRepository>(Types.IBotRepository);
     }
 }
