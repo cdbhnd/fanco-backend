@@ -7,46 +7,33 @@ import { validate } from "../utility/Validator";
 import * as Password from "../utility/Password";
 import { ActionBase } from "./ActionBase";
 import { ActionContext } from "./ActionBase";
-import * as Services from "../services/index";
 
-export class Action extends ActionBase<Entities.IBot> {
-    private botRepository: Repositories.IBotRepository;
+export class Action extends ActionBase<Entities.IEvent[]> {
+    private eventRepository: Repositories.IEventRepository;
     private organizationRepository: Repositories.IOrganizationRepository;
     private adminRepository: Repositories.IAdminUserRepository;
-    private viberBotService: Services.IViberBotService;
 
     constructor() {
         super();
-        this.botRepository = kernel.get<Repositories.IBotRepository>(Types.IBotRepository);
+        this.eventRepository = kernel.get<Repositories.IEventRepository>(Types.IEventRepository);
         this.organizationRepository = kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
         this.adminRepository = kernel.get<Repositories.IAdminUserRepository>(Types.IAdminUserRepository);
-        this.viberBotService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
     };
 
-    public async execute(context): Promise<Entities.IBot> {
-        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization })).shift();
+    public async execute(context): Promise<Entities.IEvent[]> {
+        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization.toUpperCase() })).shift();
 
-        let bot: Entities.IBot =  await this.botRepository.create({
-            service: context.params.service,
-            name: organization.name,
-            token: context.params.token,
-            organizationId: organization.oId,
-            subscribers: [],
+        let events: Entities.IEvent[] =  await this.eventRepository.find({
+            organization: organization.oId,
         });
 
-        try {
-            await this.viberBotService.initializeBotByName(bot.name);
-        } catch (e) {
-            console.log(e);
-        }
-
-        return bot;
+        return events;
     }
 
     protected async onActionExecuting(context: ActionContext): Promise<ActionContext> {
-        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization })).shift();
+        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization.toUpperCase() })).shift();
 
-        if (typeof (organization) == "undefined") {
+        if (!organization) {
             throw new Exceptions.EntityNotFoundException("Organization", context.params.organization);
         }
 
@@ -54,15 +41,13 @@ export class Action extends ActionBase<Entities.IBot> {
 
         // if admin is allowed to manage this organization
         if (adminUser.organizationId != organization.oId) {
-            throw new Exceptions.UserNotAuthorizedException(adminUser.email, "Create bot");
+            throw new Exceptions.UserNotAuthorizedException(adminUser.email, "Get all bots");
         }
         return context;
     }
 
     protected getConstraints() {
         return {
-            service: "required",
-            token: "required",
             organization: "required",
         };
     }

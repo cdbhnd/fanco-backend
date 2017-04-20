@@ -7,5 +7,5 @@
         "dbUser": "funcoDbAdmin",
         "dbPassword": "adminadmin"
     },
-    "baseUrl": "https://test-viber-bot.herokuapp.com"
+    "baseUrl": "https://fanco-server.herokuapp.com"
 }

@@ -13,6 +13,7 @@ let kernel = new Kernel();
 kernel.bind<Repositories.IAdminUserRepository>(Types.IAdminUserRepository).to(DB.AdminUsers);
 kernel.bind<Repositories.IBotRepository>(Types.IBotRepository).to(DB.Bots);
 kernel.bind<Repositories.IOrganizationRepository>(Types.IOrganizationRepository).to(DB.Organizations);
+kernel.bind<Repositories.IEventRepository>(Types.IEventRepository).to(DB.Events);
 
 kernel.bind<Services.IViberBotService>(Types.IViberBotService).to(Services.ViberBotService).inSingletonScope();
 
@@ -23,5 +24,6 @@ kernel.bind<ILogger>(Types.Logger).to(Logger).inSingletonScope();
 kernel.bind<string>("entityName").toConstantValue("admin_users").whenInjectedInto(DB.AdminUsers);
 kernel.bind<string>("entityName").toConstantValue("organizations").whenInjectedInto(DB.Organizations);
 kernel.bind<string>("entityName").toConstantValue("bots").whenInjectedInto(DB.Bots);
+kernel.bind<string>("entityName").toConstantValue("events").whenInjectedInto(DB.Events);
 
 export default kernel;

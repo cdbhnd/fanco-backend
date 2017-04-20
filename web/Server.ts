@@ -35,10 +35,15 @@ export class Server {
         let viberService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
 
         this.app.use("/viber/:botName", (req, res, next) => {
-            let botName = req.params.botName;
-            let bot = viberService.getViberBotObject(botName);
-            let callback = bot.middleware();
-            return callback(req, res, next);
+            try {
+                let botName = req.params.botName;
+                let bot = viberService.getViberBotObject(botName);
+                let callback = bot.middleware();
+                return callback(req, res, next);
+            } catch (e) {
+                console.log(e);
+                return false;
+            }
         });
         this.app.use(corsMiddleware);
         this.app.use(queryParserMiddleware);

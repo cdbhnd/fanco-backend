@@ -26,12 +26,18 @@ export class ViberBotService implements IViberBotService {
         let domainViberBots: Entities.IBot[] = await this.botRepository.find({ service: "Viber" });
 
         for (let i = 0; i < domainViberBots.length; i++) {
-            this.initializeBot(domainViberBots[i]);
+            try {
+                console.log("Initializing bot " + domainViberBots[i].name);
+                this.initializeBot(domainViberBots[i]);
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
 
     public async initializeBotByName(botName: string): Promise<any> {
         let domainViberBot: Entities.IBot = (await this.botRepository.find({ name: botName })).shift();
+        console.log("Viber bot found " + domainViberBot.name);
         this.initializeBot(domainViberBot);
     }
 
@@ -40,16 +46,40 @@ export class ViberBotService implements IViberBotService {
         return bot;
     }
 
+    public async publishEvent(event: Entities.IEvent): Promise<boolean> {
+
+        try {
+            for (let i in this.viberBotObjects) {
+                if (this.viberBotObjects.hasOwnProperty(i)) {
+                    let vBot: any = this.viberBotObjects[i];
+                    let bot: Entities.IBot = (await this.botRepository.find({ name: i })).shift();
+                    if (bot.organizationId != event.organization) {
+                        continue;
+                    }
+                    for (let j = 0; j < bot.subscribers.length; j++) {
+                        vBot.sendMessage(bot.subscribers[j], new TextMessage(event.content));
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+        return true;
+    }
+
     private initializeBot(domainViberBot: Entities.IBot): void {
         const bot = new ViberBot({
             authToken: domainViberBot.token,
             name: domainViberBot.name,
-            avatar: domainViberBot.avatar,
+            avatar: domainViberBot.avatar ? domainViberBot.avatar : "http://codebehind.rs/Content/Images/main_logo_01.png",
         });
 
-        bot.setWebhook(config.get("baseUrl") + "/viber/" + domainViberBot.name);
+        console.log("Viber bot created");
 
         this.viberBotObjects[domainViberBot.name] = bot;
+
+        console.log("Viber bot registered");
 
         bot.onTextMessage(/^hi|hello$/i, async (message, response) => {
             let res = await this.addSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
@@ -64,7 +94,11 @@ export class ViberBotService implements IViberBotService {
             await this.removeSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
             response.send(new TextMessage(`Farewell ${response.userProfile.name}. I ll be waiting for you to come back`));
         });
+        console.log("Viber bot event added");
 
+        bot.setWebhook(config.get("baseUrl") + "/viber/" + domainViberBot.name);
+
+        console.log("Webhook configured");
     }
 
     private async addSubscriber(botName: string, subscriberId: string, subscriberName: string): Promise<boolean> {
