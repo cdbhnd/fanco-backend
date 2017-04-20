@@ -47,6 +47,10 @@ export class ViberBotService implements IViberBotService {
         return bot;
     }
 
+    public getViberAvatar(): string {
+        return String(config.get("viberService.avatarImage"));
+    }
+
     public async publishEvent(event: Entities.IEvent): Promise<boolean> {
 
         try {
