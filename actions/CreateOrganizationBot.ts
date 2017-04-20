@@ -7,17 +7,20 @@ import { validate } from "../utility/Validator";
 import * as Password from "../utility/Password";
 import { ActionBase } from "./ActionBase";
 import { ActionContext } from "./ActionBase";
+import * as Services from "../services/index";
 
 export class Action extends ActionBase<Entities.IBot> {
     private botRepository: Repositories.IBotRepository;
     private organizationRepository: Repositories.IOrganizationRepository;
     private adminRepository: Repositories.IAdminUserRepository;
+    private viberBotService: Services.IViberBotService;
 
     constructor() {
         super();
         this.botRepository = kernel.get<Repositories.IBotRepository>(Types.IBotRepository);
         this.organizationRepository = kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
         this.adminRepository = kernel.get<Repositories.IAdminUserRepository>(Types.IAdminUserRepository);
+        this.viberBotService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
     };
 
     public async execute(context): Promise<Entities.IBot> {
@@ -25,9 +28,17 @@ export class Action extends ActionBase<Entities.IBot> {
 
         let bot: Entities.IBot =  await this.botRepository.create({
             service: context.params.service,
+            name: organization.name,
             token: context.params.token,
             organizationId: organization.oId,
+            subscribers: [],
         });
+
+        try {
+            await this.viberBotService.initializeBotByName(bot.name);
+        } catch (e) {
+            console.log(e);
+        }
 
         return bot;
     }

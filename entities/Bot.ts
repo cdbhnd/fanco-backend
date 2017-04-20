@@ -4,6 +4,8 @@ export interface IBot {
     token: string;
     organizationId: string;
     subscribers?: IBotSubscriber[];
+    name?: string;
+    avatar?: string;
 }
 
 interface IBotSubscriber {

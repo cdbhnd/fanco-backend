@@ -7,17 +7,20 @@ import { validate } from "../utility/Validator";
 import * as Password from "../utility/Password";
 import { ActionBase } from "./ActionBase";
 import { ActionContext } from "./ActionBase";
+import * as Services from "../services/index";
 
 export class Action extends ActionBase<Entities.IEvent> {
     private eventRepository: Repositories.IEventRepository;
     private organizationRepository: Repositories.IOrganizationRepository;
     private adminRepository: Repositories.IAdminUserRepository;
+    private viberBotService: Services.IViberBotService;
 
     constructor() {
         super();
         this.eventRepository = kernel.get<Repositories.IEventRepository>(Types.IEventRepository);
         this.organizationRepository = kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
         this.adminRepository = kernel.get<Repositories.IAdminUserRepository>(Types.IAdminUserRepository);
+        this.viberBotService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
     };
 
     public async execute(context): Promise<Entities.IEvent> {
@@ -31,6 +34,8 @@ export class Action extends ActionBase<Entities.IEvent> {
             organization: organization.oId,
             postedBy: user.email,
         });
+
+        await this.viberBotService.publishEvent(event);
 
         return event;
     }

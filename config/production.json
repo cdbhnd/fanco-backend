@@ -6,6 +6,7 @@
     "mongoDbSettings": {
         "dbUser": "funcoDbAdmin",
         "dbPassword": "adminadmin"
-    }
+    },
+    "baseUrl": "https://fanco-server.herokuapp.com"
 }
 

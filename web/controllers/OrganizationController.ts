@@ -14,7 +14,7 @@ import { HttpError } from "../decorators/httpError";
 @JsonController()
 export class OrganizationController {
 
-    @Post("/organization/:orgId/bot")
+    @Post("/organization/:orgId/bots")
     @HttpCode(200)
     @UseBefore(AuthMiddleware)
     @HttpError(401, ExceptionTypes.InvalidCredentialsException)
@@ -39,7 +39,7 @@ export class OrganizationController {
     public async getOrganizationBots( @Param("userId") userId: string, @Param("orgId") orgId: string) {
         let getOrganizationBots = new GetOrganizationBots.Action();
         let actionContext = new ActionContext();
-        actionContext.params = { id: userId };
+        actionContext.params = { userId: userId };
         // tslint:disable-next-line:no-string-literal
         actionContext.params["organization"] = orgId;
         let bots = await getOrganizationBots.run(actionContext);
@@ -54,7 +54,7 @@ export class OrganizationController {
     public async getOrganizationBot( @Param("userId") userId: string, @Param("botId") botId: string, @Param("orgId") orgId: string) {
         let getOrganizationBot = new GetOrganizationBot.Action();
         let actionContext = new ActionContext();
-        actionContext.params = { id: userId };
+        actionContext.params = { userId: userId };
         // tslint:disable-next-line:no-string-literal
         actionContext.params["organization"] = orgId;
         // tslint:disable-next-line:no-string-literal
@@ -63,7 +63,7 @@ export class OrganizationController {
         return bot;
     }
 
-    @Delete("/organization/:orgName/bot/:botId")
+    @Delete("/organization/:orgName/bots/:botId")
     @UseBefore(AuthMiddleware)
     @HttpCode(200)
     @HttpError(400, ExceptionTypes.ValidationException)
@@ -71,7 +71,7 @@ export class OrganizationController {
     public async deleteOrganizationBot( @Param("userId") userId: string, @Param("botId") botId: string, @Param("orgName") orgName: string) {
         let deleteOrganizationBot = new DeleteOrganizationBot.Action();
         let actionContext = new ActionContext();
-        actionContext.params = { id: userId };
+        actionContext.params = { userId: userId };
         // tslint:disable-next-line:no-string-literal
         actionContext.params["organization"] = orgName;
         // tslint:disable-next-line:no-string-literal

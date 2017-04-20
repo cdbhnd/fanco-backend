@@ -5,6 +5,7 @@ import * as CreateOrganizationBot from "./CreateOrganizationBot";
 import * as GetOrganizationBots from "./GetOrganizationBots";
 import * as GetOrganizationBot from "./GetOrganizationBot";
 import * as DeleteOrganizationBot from "./DeleteOrganizationBot";
+import * as InitializeAllBots from "./InitializeAllBots";
 import * as GetEvents from "./GetEvents";
 import * as CreateEvent from "./CreateEvent";
-export {ActionContext, ActionBase, AdminLogin, CreateOrganizationBot, GetOrganizationBots, GetOrganizationBot, DeleteOrganizationBot, GetEvents, CreateEvent};
+export {ActionContext, ActionBase, AdminLogin, CreateOrganizationBot, GetOrganizationBots, GetOrganizationBot, DeleteOrganizationBot, GetEvents, CreateEvent, InitializeAllBots};

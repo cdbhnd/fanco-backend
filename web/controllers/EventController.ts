@@ -20,7 +20,7 @@ export class EventController {
         let getOrgEventsAction = new actions.GetEvents.Action();
         let actionContext = new ActionContext();
         actionContext.params = {
-            id: userId,
+            userId: userId,
             organization: orgId,
         };
         return await getOrgEventsAction.run(actionContext);
