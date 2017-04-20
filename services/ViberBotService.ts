@@ -98,12 +98,7 @@ export class ViberBotService implements IViberBotService {
             let schedules = (await scheduleRepo.find({ timestamp: { $gt: currentTimestamp } })).slice(0, 3);
 
             for (let i = 0; i < schedules.length; i++) {
-                await this.publishEvent({
-                    type: "message",
-                    content: schedules[i].timestamp + " - " + schedules[i].description,
-                    organization: domainViberBot.organizationId,
-                    timestamp: schedules[i].timestamp,
-                });
+                response.send(new TextMessage(schedules[i].timestamp + " - " + schedules[i].description));
             }
         });
 
@@ -113,8 +108,7 @@ export class ViberBotService implements IViberBotService {
         });
         console.log("Viber bot event added");
 
-        // bot.setWebhook(config.get("baseUrl") + "/viber/" + domainViberBot.name);
-        bot.setWebhook("");
+        bot.setWebhook(config.get("baseUrl") + "/viber/" + domainViberBot.name);
 
         console.log("Webhook configured");
     }
