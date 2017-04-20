@@ -8,4 +8,10 @@ import * as DeleteOrganizationBot from "./DeleteOrganizationBot";
 import * as InitializeAllBots from "./InitializeAllBots";
 import * as GetEvents from "./GetEvents";
 import * as CreateEvent from "./CreateEvent";
-export {ActionContext, ActionBase, AdminLogin, CreateOrganizationBot, GetOrganizationBots, GetOrganizationBot, DeleteOrganizationBot, GetEvents, CreateEvent, InitializeAllBots};
+import * as GetSchedules from "./GetSchedules";
+import * as GetOneSchedule from "./GetOneSchedule";
+import * as CreateSchedule from "./CreateSchedule";
+import * as DeleteSchedule from "./DeleteSchedule";
+export {ActionContext, ActionBase, AdminLogin,
+    CreateOrganizationBot, GetOrganizationBots, GetOrganizationBot, DeleteOrganizationBot, InitializeAllBots,
+    GetEvents, CreateEvent, GetSchedules, GetOneSchedule, CreateSchedule, DeleteSchedule};

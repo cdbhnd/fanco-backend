@@ -14,6 +14,7 @@ kernel.bind<Repositories.IAdminUserRepository>(Types.IAdminUserRepository).to(DB
 kernel.bind<Repositories.IBotRepository>(Types.IBotRepository).to(DB.Bots);
 kernel.bind<Repositories.IOrganizationRepository>(Types.IOrganizationRepository).to(DB.Organizations);
 kernel.bind<Repositories.IEventRepository>(Types.IEventRepository).to(DB.Events);
+kernel.bind<Repositories.IScheduleRepository>(Types.IScheduleRepository).to(DB.Schedules);
 
 kernel.bind<Services.IViberBotService>(Types.IViberBotService).to(Services.ViberBotService).inSingletonScope();
 
@@ -25,5 +26,6 @@ kernel.bind<string>("entityName").toConstantValue("admin_users").whenInjectedInt
 kernel.bind<string>("entityName").toConstantValue("organizations").whenInjectedInto(DB.Organizations);
 kernel.bind<string>("entityName").toConstantValue("bots").whenInjectedInto(DB.Bots);
 kernel.bind<string>("entityName").toConstantValue("events").whenInjectedInto(DB.Events);
+kernel.bind<string>("entityName").toConstantValue("schedules").whenInjectedInto(DB.Schedules);
 
 export default kernel;

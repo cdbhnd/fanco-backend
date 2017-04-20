@@ -3,6 +3,6 @@ export interface IEvent {
     type: string;
     content: any;
     organization: string;
-    postedBy: string;
+    postedBy?: string;
     timestamp: string;
 }
