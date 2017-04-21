@@ -27,7 +27,7 @@ export class Action extends ActionBase<Entities.ISchedule> {
             timestamp: context.params.timestamp,
             description: context.params.description,
             alarm: !!context.params.alarm,
-            organization: context.params.organization.oId,
+            organizationId: context.params.organization.oId,
         });
 
         return schedule;
