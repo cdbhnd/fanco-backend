@@ -1,6 +1,7 @@
 import { DB } from "./DB";
 import * as mongodb from "mongodb";
 import { injectable } from "inversify";
+import * as config from "config";
 
 @injectable()
 export class BaseRepository<T> {
@@ -8,12 +9,13 @@ export class BaseRepository<T> {
     private entityName: string;
 
     constructor(entityName: string) {
-        DB.init();
+        // DB.init();
         this.entityName = entityName;
         this.db = DB.db;
     }
 
     public async find(query: any): Promise<T[]> {
+        // await this.connectToDb();
         this.normalizeSearchQuery(query);
         let result = await DB.db.collection(this.entityName).find(query).toArray();
         if (!!result && !!result.length) {
@@ -116,5 +118,12 @@ export class BaseRepository<T> {
             }
         }
         return null;
+    }
+
+    private async connectToDb(): Promise<boolean> {
+        if (!this.db) {
+            this.db = await mongodb.MongoClient.connect("mongodb://" + config.get("mongoDbSettings.dbUser") + ":" + config.get("mongoDbSettings.dbPassword") + "@ds159220.mlab.com:59220/fanco");
+        }
+        return true;
     }
 }
