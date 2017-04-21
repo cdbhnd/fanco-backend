@@ -11,6 +11,8 @@ const ViberBot = require("viber-bot").Bot;
 const BotEvents = require("viber-bot").Events;
 // tslint:disable-next-line:no-var-requires
 const TextMessage = require("viber-bot").Message.Text;
+// tslint:disable-next-line:no-var-requires
+let momentTz = require("moment-timezone");
 
 @injectable()
 export class ViberBotService implements IViberBotService {
@@ -91,7 +93,7 @@ export class ViberBotService implements IViberBotService {
             let res = await this.addSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
             if (res) {
                 response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`));
-            }else {
+            } else {
                 response.send(new TextMessage(`Hey ${response.userProfile.name}. I think we've already met ! :)`));
             }
         });
@@ -99,11 +101,15 @@ export class ViberBotService implements IViberBotService {
         bot.onTextMessage(/^schedule$/i, async (message, response) => {
             let scheduleRepo = this.getScheduleRepository();
             let currentTimestamp = (new Date()).toISOString();
-            let schedules = (await scheduleRepo.find({ timestamp: { $gt: currentTimestamp } })).slice(0, 3);
+            let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainViberBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
+            let scheduleMessage: string = "";
 
             for (let i = 0; i < schedules.length; i++) {
-                response.send(new TextMessage(schedules[i].timestamp + " - " + schedules[i].description));
+                let atTimeMessage = this.generateAtWhatTimeMessage(schedules[i].timestamp);
+                scheduleMessage = scheduleMessage + atTimeMessage + "\n" + schedules[i].description + "\n\n";
+
             }
+            response.send(new TextMessage(scheduleMessage));
         });
 
         bot.onTextMessage(/^bye|Bye$/i, async (message, response) => {
@@ -152,6 +158,15 @@ export class ViberBotService implements IViberBotService {
             }
         }
         return false;
+    }
+
+    private generateAtWhatTimeMessage(timestamp: string): string {
+        let dateObj = momentTz(timestamp).tz("Europe/Belgrade");
+        let date = dateObj.format("DD/MM/YYYY");
+        let time = dateObj.format("HH:mm");
+
+        let scheduleItemAtTime = date + " at " + time;
+        return scheduleItemAtTime;
     }
 
     private getScheduleRepository(): Repositories.IScheduleRepository {
