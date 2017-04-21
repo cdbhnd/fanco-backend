@@ -3,5 +3,5 @@ export interface ISchedule {
     timestamp: string;
     description: string;
     alarm: boolean;
-    organization: string;
+    organizationId: string;
 }

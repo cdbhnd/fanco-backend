@@ -23,7 +23,7 @@ export class Action extends ActionBase<Entities.ISchedule[]> {
 
     public async execute(context): Promise<Entities.ISchedule[]> {
 
-        return await this.scheduleRepository.find({ organization: context.params.organization.oId });
+        return await this.scheduleRepository.find({ organizationId: context.params.organization.oId });
     }
 
     protected async onActionExecuting(context: ActionContext): Promise<ActionContext> {
