@@ -5,13 +5,13 @@ import { ActionContext } from "./ActionBase";
 import * as Services from "../services/index";
 
 export class Action extends ActionBase<boolean> {
-    private viberBotService: Services.IViberBotService;
-    private fBMessengerBotService: Services.IFbMessengerService;
+    private viberBotService: Services.IBotService;
+    private fBMessengerBotService: Services.IBotService;
 
     constructor() {
         super();
-        this.viberBotService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
-        this.fBMessengerBotService = kernel.get<Services.IFbMessengerService>(Types.IFbMessenger);
+        this.viberBotService = kernel.getNamed<Services.IBotService>(Types.IBotService, "viber");
+        this.fBMessengerBotService = kernel.getNamed<Services.IBotService>(Types.IBotService, "fbmessenger");
     };
 
     public async execute(context): Promise<any> {

@@ -1,4 +1,4 @@
-import { IFbMessengerService } from "./IFbMessengerService";
+import { IBotService } from "./IBotService";
 import * as Repositories from "../repositories/";
 import { Types, kernel } from "../infrastructure/dependency-injection/";
 import { ValidationException } from "../infrastructure/exceptions/";
@@ -10,7 +10,7 @@ import { Bot, Elements } from "facebook-messenger-bot";
 let momentTz = require("moment-timezone");
 
 @injectable()
-export class FbMessengerService implements IFbMessengerService {
+export class FbMessengerService implements IBotService {
     private fbMessengerBots = [];
 
     constructor() {
@@ -121,7 +121,7 @@ export class FbMessengerService implements IFbMessengerService {
             if (message.text.match(/^schedule$/i)) {
                 let scheduleRepo = this.getScheduleRepository();
                 let currentTimestamp = (new Date()).toISOString();
-                let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainViberBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
+                let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
                 let scheduleMessage: string = "";
 
                 for (let i = 0; i < schedules.length; i++) {

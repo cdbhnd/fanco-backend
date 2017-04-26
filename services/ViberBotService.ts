@@ -1,4 +1,4 @@
-import { IViberBotService } from "./IViberBotService";
+import { IBotService } from "./IBotService";
 import * as Repositories from "../repositories/";
 import { Types, kernel } from "../infrastructure/dependency-injection/";
 import { ValidationException } from "../infrastructure/exceptions/";
@@ -15,7 +15,7 @@ const TextMessage = require("viber-bot").Message.Text;
 let momentTz = require("moment-timezone");
 
 @injectable()
-export class ViberBotService implements IViberBotService {
+export class ViberBotService implements IBotService {
 
     private viberBotObjects = [];
 

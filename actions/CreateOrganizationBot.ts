@@ -13,19 +13,19 @@ export class Action extends ActionBase<Entities.IBot> {
     private botRepository: Repositories.IBotRepository;
     private organizationRepository: Repositories.IOrganizationRepository;
     private adminRepository: Repositories.IAdminUserRepository;
-    private viberBotService: Services.IViberBotService;
 
     constructor() {
         super();
         this.botRepository = kernel.get<Repositories.IBotRepository>(Types.IBotRepository);
         this.organizationRepository = kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
         this.adminRepository = kernel.get<Repositories.IAdminUserRepository>(Types.IAdminUserRepository);
-        this.viberBotService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
     };
 
     public async execute(context): Promise<Entities.IBot> {
         let serviceName = context.service;
-        return "";
+        let service: Services.IBotService = kernel.getNamed<Services.IBotService>(Types.IBotService, serviceName);
+        let bot: Entities.IBot = await service.createBot(context.params);
+        return bot;
     }
 
     protected async onActionExecuting(context: ActionContext): Promise<ActionContext> {

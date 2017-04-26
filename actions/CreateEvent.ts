@@ -13,14 +13,16 @@ export class Action extends ActionBase<Entities.IEvent> {
     private eventRepository: Repositories.IEventRepository;
     private organizationRepository: Repositories.IOrganizationRepository;
     private adminRepository: Repositories.IAdminUserRepository;
-    private viberBotService: Services.IViberBotService;
+    private viberBotService: Services.IBotService;
+    private fBmessengerService: Services.IBotService;
 
     constructor() {
         super();
         this.eventRepository = kernel.get<Repositories.IEventRepository>(Types.IEventRepository);
         this.organizationRepository = kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
         this.adminRepository = kernel.get<Repositories.IAdminUserRepository>(Types.IAdminUserRepository);
-        this.viberBotService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
+        this.viberBotService =  kernel.getNamed<Services.IBotService>(Types.IBotService, "viber");
+        this.fBmessengerService = kernel.getNamed<Services.IBotService>(Types.IBotService, "fbmessenger");
     };
 
     public async execute(context): Promise<Entities.IEvent> {
@@ -36,6 +38,7 @@ export class Action extends ActionBase<Entities.IEvent> {
         });
 
         await this.viberBotService.publishEvent(event);
+        await this.fBmessengerService.publishEvent(event);
 
         return event;
     }

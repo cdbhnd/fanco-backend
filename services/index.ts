@@ -1,4 +1,3 @@
-export * from "./IViberBotService";
+export * from "./IBotService";
 export * from "./ViberBotService";
-export * from "./IFbMessengerService";
 export * from "./FbMessengerService";

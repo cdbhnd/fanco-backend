@@ -32,8 +32,8 @@ export class Server {
         let actionContext = new ActionContext();
         await initializeAllBots.run(actionContext);
 
-        let viberService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
-        let fBMessengerService = kernel.get<Services.IFbMessengerService>(Types.IFbMessenger);
+        let viberService = kernel.getNamed<Services.IBotService>(Types.IBotService, "viber");
+        let fBMessengerService = kernel.getNamed<Services.IBotService>(Types.IBotService, "fbmessenger");
 
         this.app.use("/viber/:botName", (req, res, next) => {
             try {
