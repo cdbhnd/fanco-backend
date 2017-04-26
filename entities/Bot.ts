@@ -7,6 +7,9 @@ export interface IBot {
     subscribers?: IBotSubscriber[];
     name?: string;
     avatar?: string;
+    shareableLink?: string;
+    webhook?: string;
+    verificationToken?: string;
 }
 
 interface IBotSubscriber {

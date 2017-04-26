@@ -118,7 +118,9 @@ export class ViberBotService implements IViberBotService {
         });
         console.log("Viber bot event added");
 
-        bot.setWebhook(config.get("baseUrl") + "/viber/" + domainViberBot.name);
+        domainViberBot.webhook = config.get("baseUrl") + "/viber/" + domainViberBot.name;
+
+        bot.setWebhook(domainViberBot.webhook);
 
         console.log("Webhook configured");
     }
