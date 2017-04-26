@@ -2,7 +2,7 @@ export interface IBot {
     id?: string;
     service: string;
     token: string;
-    fbVerificationToken: string;
+    fbVerificationToken?: string;
     organizationId: string;
     subscribers?: IBotSubscriber[];
     name?: string;

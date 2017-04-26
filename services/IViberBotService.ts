@@ -1,4 +1,5 @@
 import { IEvent } from "../entities/";
+import * as Entities from "../entities";
 
 export interface IViberBotService {
     initializeAllBots(): Promise<any>;

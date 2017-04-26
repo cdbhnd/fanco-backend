@@ -17,7 +17,7 @@ kernel.bind<Repositories.IEventRepository>(Types.IEventRepository).to(DB.Events)
 kernel.bind<Repositories.IScheduleRepository>(Types.IScheduleRepository).to(DB.Schedules);
 
 kernel.bind<Services.IViberBotService>(Types.IViberBotService).to(Services.ViberBotService).inSingletonScope();
-
+kernel.bind<Services.IFbMessengerService>(Types.IFbMessenger).to(Services.FbMessengerService).inSingletonScope();
 // utility
 kernel.bind<ILogger>(Types.Logger).to(Logger).inSingletonScope();
 

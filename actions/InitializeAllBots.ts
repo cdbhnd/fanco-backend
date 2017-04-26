@@ -6,14 +6,17 @@ import * as Services from "../services/index";
 
 export class Action extends ActionBase<boolean> {
     private viberBotService: Services.IViberBotService;
+    private fBMessengerBotService: Services.IFbMessengerService;
 
     constructor() {
         super();
         this.viberBotService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
+        this.fBMessengerBotService = kernel.get<Services.IFbMessengerService>(Types.IFbMessenger);
     };
 
     public async execute(context): Promise<any> {
         await this.viberBotService.initializeAllBots();
+        await this.fBMessengerBotService.initializeAllBots();
     }
 
     protected async onActionExecuting(context: ActionContext): Promise<ActionContext> {

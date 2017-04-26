@@ -6,6 +6,7 @@ let Types = {
     IScheduleRepository: Symbol("IScheduleRepository"),
     Logger: Symbol("Logger"),
     IViberBotService: Symbol("IViberBotService"),
+    IFbMessenger: Symbol("IFbMessenger"),
 };
 
 export default Types;

@@ -33,6 +33,7 @@ export class Server {
         await initializeAllBots.run(actionContext);
 
         let viberService = kernel.get<Services.IViberBotService>(Types.IViberBotService);
+        let fBMessengerService = kernel.get<Services.IFbMessengerService>(Types.IFbMessenger);
 
         this.app.use("/viber/:botName", (req, res, next) => {
             try {
@@ -49,8 +50,8 @@ export class Server {
         this.app.use("/fbmessenger/:botName", (req, res, next) => {
             try {
                 let botName = req.params.botName;
-                let bot = fbMessengerService.getFbMessengerBotObject(botName);
-                let callback = bot.middleware();
+                let bot = fBMessengerService.getFbMessengerBotObject(botName);
+                let callback = bot.router();
                 return callback(req, res, next);
             } catch (e) {
                 console.log(e);
