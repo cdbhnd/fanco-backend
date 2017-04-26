@@ -45,6 +45,19 @@ export class Server {
                 return false;
             }
         });
+
+        this.app.use("/fbmessenger/:botName", (req, res, next) => {
+            try {
+                let botName = req.params.botName;
+                let bot = fbMessengerService.getFbMessengerBotObject(botName);
+                let callback = bot.middleware();
+                return callback(req, res, next);
+            } catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+
         this.app.use(corsMiddleware);
         this.app.use(queryParserMiddleware);
         this.app.use(express.static("assets"));
