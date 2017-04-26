@@ -38,7 +38,7 @@ export class Server {
         this.app.use("/viber/:botName", (req, res, next) => {
             try {
                 let botName = req.params.botName;
-                let bot = viberService.getViberBotObject(botName);
+                let bot = viberService.getBotObject(botName);
                 let callback = bot.middleware();
                 return callback(req, res, next);
             } catch (e) {
@@ -50,7 +50,7 @@ export class Server {
         this.app.use("/fbmessenger/:botName", (req, res, next) => {
             try {
                 let botName = req.params.botName;
-                let bot = fBMessengerService.getFbMessengerBotObject(botName);
+                let bot = fBMessengerService.getBotObject(botName);
                 let callback = bot.router();
                 return callback(req, res, next);
             } catch (e) {

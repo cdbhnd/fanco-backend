@@ -22,7 +22,7 @@ export class FbMessengerService implements IFbMessengerService {
         let bot: Entities.IBot = await this.getBotRepository().create({
             service: data.service,
             name: !!data.name ? data.name : organization.name,
-            avatar: "",
+            avatar: !!data.avatar ? data.avatar : this.getAvatar(),
             token: data.token,
             organizationId: organization.oId,
             subscribers: [],
@@ -54,9 +54,34 @@ export class FbMessengerService implements IFbMessengerService {
         this.initializeBot(domainBot);
     }
 
-    public getFbMessengerBotObject(botName: string): any {
+    public getBotObject(botName: string): any {
         let bot = this.fbMessengerBots[botName];
         return bot;
+    }
+
+    public async publishEvent(event: Entities.IEvent): Promise<boolean> {
+
+        try {
+            for (let i in this.fbMessengerBots) {
+                if (this.fbMessengerBots.hasOwnProperty(i)) {
+                    let fbBot: any = this.fbMessengerBots[i];
+                    let botRepository = this.getBotRepository();
+                    let bot: Entities.IBot = (await botRepository.find({ name: i })).shift();
+                    if (bot.organizationId != event.organization) {
+                        continue;
+                    }
+                    for (let j = 0; j < bot.subscribers.length; j++) {
+                        const out = new Elements();
+                        out.add({ text: event.content});
+                        await fbBot.send(bot.subscribers[j].id, out);
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+        return true;
     }
 
     private initializeBot(domainBot: Entities.IBot): void {
@@ -136,6 +161,10 @@ export class FbMessengerService implements IFbMessengerService {
             }
         }
         return false;
+    }
+
+    private getAvatar(): string {
+        return String(config.get("fBMessengerService.avatarImage"));
     }
 
     private getScheduleRepository(): Repositories.IScheduleRepository {

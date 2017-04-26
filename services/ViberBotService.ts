@@ -22,6 +22,9 @@ export class ViberBotService implements IViberBotService {
     constructor() {
         // not empty
     };
+    public async createBot(data: any): Promise<Entities.IBot> {
+
+    }
 
     public async initializeAllBots(): Promise<any> {
         let botRepository = this.getBotRepository();
@@ -44,7 +47,7 @@ export class ViberBotService implements IViberBotService {
         this.initializeBot(domainViberBot);
     }
 
-    public getViberBotObject(botName: string): any {
+    public getBotObject(botName: string): any {
         let bot = this.viberBotObjects[botName];
         return bot;
     }
