@@ -23,7 +23,20 @@ export class ViberBotService implements IViberBotService {
         // not empty
     };
     public async createBot(data: any): Promise<Entities.IBot> {
-
+        let organization: Entities.IOrganization = (await this.getOrganizationRepository().find({ oId: data.organization.toUpperCase() })).shift();
+        let bot: Entities.IBot = await this.getBotRepository().create({
+            service: data.service,
+            name: !!data.name ? data.name : organization.name,
+            avatar: !!data.avatar ? data.avatar : this.getViberAvatar(),
+            token: data.token,
+            organizationId: organization.oId,
+            subscribers: [],
+            shareableLink: !!data.shareableLink ? data.shareableLink : "",
+            verificationToken: !!data.verificationToken ? data.verificationToken : "",
+            webhook: config.get("baseUrl") + "/fbmessenger/" + data.name,
+        });
+        await this.initializeBot(bot);
+        return bot;
     }
 
     public async initializeAllBots(): Promise<any> {
@@ -83,7 +96,7 @@ export class ViberBotService implements IViberBotService {
         const bot = new ViberBot({
             authToken: domainViberBot.token,
             name: domainViberBot.name,
-            avatar: domainViberBot.avatar ? domainViberBot.avatar : "http://codebehind.rs/Content/Images/main_logo_01.png",
+            avatar: domainViberBot.avatar,
         });
 
         console.log("Viber bot created");
@@ -180,5 +193,9 @@ export class ViberBotService implements IViberBotService {
 
     private getBotRepository(): Repositories.IBotRepository {
         return kernel.get<Repositories.IBotRepository>(Types.IBotRepository);
+    }
+
+    private getOrganizationRepository(): Repositories.IOrganizationRepository {
+        return kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
     }
 }

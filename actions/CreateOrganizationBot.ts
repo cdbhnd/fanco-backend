@@ -24,27 +24,8 @@ export class Action extends ActionBase<Entities.IBot> {
     };
 
     public async execute(context): Promise<Entities.IBot> {
-        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization.toUpperCase() })).shift();
-
-        let bot: Entities.IBot =  await this.botRepository.create({
-            service: context.params.service,
-            name: !!context.params.name ? context.params.name : organization.name,
-            avatar: !!context.params.avatar ? context.params.avatar : this.viberBotService.getViberAvatar(),
-            token: context.params.token,
-            organizationId: organization.oId,
-            subscribers: [],
-            webhook: !!context.params.webhook ? context.params.webhook : "",
-            shareableLink: !!context.params.shareableLink ? context.params.shareableLink : "",
-            verificationToken: !!context.params.verificationToken ? context.params.verificationToken : "",
-        });
-
-        try {
-            await this.viberBotService.initializeBotByName(bot.name);
-        } catch (e) {
-            console.log(e);
-        }
-
-        return bot;
+        let serviceName = context.service;
+        return "";
     }
 
     protected async onActionExecuting(context: ActionContext): Promise<ActionContext> {

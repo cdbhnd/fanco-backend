@@ -6,19 +6,19 @@ import * as Entities from "../entities/";
 import * as config from "config";
 import { injectable } from "inversify";
 import { Bot, Elements } from "facebook-messenger-bot";
+// tslint:disable-next-line:no-var-requires
+let momentTz = require("moment-timezone");
 
 @injectable()
 export class FbMessengerService implements IFbMessengerService {
-
-    private organizationRepository: Repositories.IOrganizationRepository;
     private fbMessengerBots = [];
 
     constructor() {
-        this.organizationRepository = kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
+        // not empty
     };
 
     public async createBot(data: any): Promise<Entities.IBot> {
-        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: data.organization.toUpperCase() })).shift();
+        let organization: Entities.IOrganization = (await this.getOrganizationRepository().find({ oId: data.organization.toUpperCase() })).shift();
         let bot: Entities.IBot = await this.getBotRepository().create({
             service: data.service,
             name: !!data.name ? data.name : organization.name,
@@ -30,6 +30,7 @@ export class FbMessengerService implements IFbMessengerService {
             verificationToken: !!data.verificationToken ? data.verificationToken : "",
             webhook: config.get("baseUrl") + "/fbmessenger/" + data.name,
         });
+        await this.initializeBot(bot);
         return bot;
     }
 
@@ -45,13 +46,6 @@ export class FbMessengerService implements IFbMessengerService {
                 console.log(e);
             }
         }
-    }
-
-    public async initializeBotByName(domainBot: Entities.IBot): Promise<any> {
-        let botRepository = this.getBotRepository();
-        let domainViberBot: Entities.IBot = (await botRepository.find({ name: domainBot })).shift();
-        console.log("Facebook Messenger bot found " + domainBot);
-        this.initializeBot(domainBot);
     }
 
     public getBotObject(botName: string): any {
@@ -72,7 +66,7 @@ export class FbMessengerService implements IFbMessengerService {
                     }
                     for (let j = 0; j < bot.subscribers.length; j++) {
                         const out = new Elements();
-                        out.add({ text: event.content});
+                        out.add({ text: event.content });
                         await fbBot.send(bot.subscribers[j].id, out);
                     }
                 }
@@ -123,6 +117,22 @@ export class FbMessengerService implements IFbMessengerService {
                 out.add({ text: `Farewell ${sender.first_name}. I ll be waiting for you to come back !` });
                 await bot.send(sender.id, out);
             }
+
+            if (message.text.match(/^schedule$/i)) {
+                let scheduleRepo = this.getScheduleRepository();
+                let currentTimestamp = (new Date()).toISOString();
+                let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainViberBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
+                let scheduleMessage: string = "";
+
+                for (let i = 0; i < schedules.length; i++) {
+                    let atTimeMessage = this.generateAtWhatTimeMessage(schedules[i].timestamp);
+                    scheduleMessage = scheduleMessage + atTimeMessage + "\n" + schedules[i].description + "\n\n";
+
+                }
+                const out = new Elements();
+                out.add({ text: scheduleMessage });
+                await bot.send(sender.id, out);
+            }
         });
     }
 
@@ -163,6 +173,15 @@ export class FbMessengerService implements IFbMessengerService {
         return false;
     }
 
+    private generateAtWhatTimeMessage(timestamp: string): string {
+        let dateObj = momentTz(timestamp).tz("Europe/Belgrade");
+        let date = dateObj.format("DD/MM/YYYY");
+        let time = dateObj.format("HH:mm");
+
+        let scheduleItemAtTime = date + " at " + time;
+        return scheduleItemAtTime;
+    }
+
     private getAvatar(): string {
         return String(config.get("fBMessengerService.avatarImage"));
     }
@@ -173,5 +192,9 @@ export class FbMessengerService implements IFbMessengerService {
 
     private getBotRepository(): Repositories.IBotRepository {
         return kernel.get<Repositories.IBotRepository>(Types.IBotRepository);
+    }
+
+    private getOrganizationRepository(): Repositories.IOrganizationRepository {
+        return kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
     }
 }
