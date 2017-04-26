@@ -29,7 +29,7 @@ export class Action extends ActionBase<Entities.IBot> {
     }
 
     protected async onActionExecuting(context: ActionContext): Promise<ActionContext> {
-        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization })).shift();
+        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization.toUpperCase() })).shift();
 
         if (typeof (organization) == "undefined") {
             throw new Exceptions.EntityNotFoundException("Organization", context.params.organization);

@@ -24,7 +24,7 @@ export class Action extends ActionBase<Entities.IBot> {
     };
 
     public async execute(context): Promise<Entities.IBot> {
-        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization })).shift();
+        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization.toUpperCase() })).shift();
 
         let bot: Entities.IBot =  await this.botRepository.create({
             service: context.params.service,
@@ -33,6 +33,9 @@ export class Action extends ActionBase<Entities.IBot> {
             token: context.params.token,
             organizationId: organization.oId,
             subscribers: [],
+            webhook: !!context.params.webhook ? context.params.webhook : "",
+            shareableLink: !!context.params.shareableLink ? context.params.shareableLink : "",
+            verificationToken: !!context.params.verificationToken ? context.params.verificationToken : "",
         });
 
         try {
@@ -45,7 +48,7 @@ export class Action extends ActionBase<Entities.IBot> {
     }
 
     protected async onActionExecuting(context: ActionContext): Promise<ActionContext> {
-        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization })).shift();
+        let organization: Entities.IOrganization = (await this.organizationRepository.find({ oId: context.params.organization.toUpperCase() })).shift();
 
         if (typeof (organization) == "undefined") {
             throw new Exceptions.EntityNotFoundException("Organization", context.params.organization);
