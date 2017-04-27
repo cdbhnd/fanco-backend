@@ -27,7 +27,7 @@ export class FbMessengerService implements IBotService {
             organizationId: organization.oId,
             subscribers: [],
             shareableLink: !!data.shareableLink ? data.shareableLink : "",
-            verificationToken: !!data.verificationToken ? data.verificationToken : "",
+            verificationToken: data.name.toUpperCase() + "_" + data.service.toUpperCase(),
             webhook: config.get("baseUrl") + "/fbmessenger/" + data.name,
         });
         await this.initializeBot(bot);
