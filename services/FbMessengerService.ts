@@ -130,8 +130,19 @@ export class FbMessengerService implements IBotService {
                     scheduleMessage = scheduleMessage + atTimeMessage + "\n" + schedules[i].description + "\n\n";
 
                 }
+
                 const out = new Elements();
                 out.add({ text: scheduleMessage });
+                await bot.send(sender.id, out);
+            }
+
+            if (message.text.match(/^Results|Rezultati$/i)) {
+                let organization = (await this.getOrganizationRepository().find({ oId: domainBot.organizationId })).shift();
+                let webPagelink = organization.data.resultsUrl;
+                let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
+
+                const out = new Elements();
+                out.add({ text: imageLink });
                 await bot.send(sender.id, out);
             }
         });
