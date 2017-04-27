@@ -5,7 +5,7 @@ let Types = {
     IEventRepository: Symbol("IEventRepository"),
     IScheduleRepository: Symbol("IScheduleRepository"),
     Logger: Symbol("Logger"),
-    IViberBotService: Symbol("IViberBotService"),
+    IBotService: Symbol("IBotService"),
 };
 
 export default Types;

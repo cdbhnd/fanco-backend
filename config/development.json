@@ -7,9 +7,13 @@
         "dbUser": "funcoDbAdmin",
         "dbPassword": "adminadmin"
     },
-    "baseUrl": "https://fanco-server.herokuapp.com",
+    "baseUrl": "https://test-viber-bot.herokuapp.com",
 
     "viberService": {
         "avatarImage": "https://lh3.googleusercontent.com/rSQtWt_ahw1QoUtuwZkgNV_k4sRemA0Rd44Un7elH05ZW-DPntl1RoJ0Of8v-nLhgXw"
+    },
+
+    "fBMessengerService": {
+        "avatarImage": "http://www.freeiconspng.com/uploads/fb-icon-11.png"
     }
 }
