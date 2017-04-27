@@ -6,6 +6,7 @@ import * as Entities from "../entities/";
 import * as config from "config";
 import { injectable } from "inversify";
 import { Bot, Elements } from "facebook-messenger-bot";
+import * as Services from "./";
 // tslint:disable-next-line:no-var-requires
 let momentTz = require("moment-timezone");
 
@@ -196,5 +197,9 @@ export class FbMessengerService implements IBotService {
 
     private getOrganizationRepository(): Repositories.IOrganizationRepository {
         return kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
+    }
+
+    private getWebPageToImgService(): Services.IWebPageToImgService {
+        return kernel.get<Services.IWebPageToImgService>(Types.IWebPageToImgService);
     }
 }

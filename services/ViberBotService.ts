@@ -2,6 +2,7 @@ import { IBotService } from "./IBotService";
 import * as Repositories from "../repositories/";
 import { Types, kernel } from "../infrastructure/dependency-injection/";
 import { ValidationException } from "../infrastructure/exceptions/";
+import * as Services from "./";
 import * as Entities from "../entities/";
 import * as config from "config";
 import { injectable } from "inversify";
@@ -114,6 +115,13 @@ export class ViberBotService implements IBotService {
             }
         });
 
+        bot.onTextMessage(/^Results|Rezultati$/i, async (message, response) => {
+            let organization  = (await this.getOrganizationRepository().find({oId: domainViberBot.organizationId})).shift();
+            let link  = organization.data.resultsUrl;
+            let imageLink = await this.getWebPageToImgService().getPageImgByUrl(link);
+            response.send(new TextMessage(imageLink));
+        });
+
         bot.onTextMessage(/^schedule$/i, async (message, response) => {
             let scheduleRepo = this.getScheduleRepository();
             let currentTimestamp = (new Date()).toISOString();
@@ -197,5 +205,9 @@ export class ViberBotService implements IBotService {
 
     private getOrganizationRepository(): Repositories.IOrganizationRepository {
         return kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
+    }
+
+    private getWebPageToImgService(): Services.IWebPageToImgService {
+        return kernel.get<Services.IWebPageToImgService>(Types.IWebPageToImgService);
     }
 }
