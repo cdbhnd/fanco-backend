@@ -37,7 +37,7 @@ export class FbMessengerService implements IBotService {
 
     public async initializeAllBots(): Promise<any> {
         let botRepository = this.getBotRepository();
-        let domainBots: Entities.IBot[] = await botRepository.find({ service: "FbMessenger" });
+        let domainBots: Entities.IBot[] = await botRepository.find({ service: "fbmessenger" });
 
         for (let i = 0; i < domainBots.length; i++) {
             try {

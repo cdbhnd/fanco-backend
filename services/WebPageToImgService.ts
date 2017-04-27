@@ -5,14 +5,11 @@ import { injectable } from "inversify";
 @injectable()
 export class WebPageToImgService implements IWebPageToImgService {
     public async getPageImgByUrl(link: string): Promise<string> {
-        console.log("UNISHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO !!!!!!!!!!!!!!");
-        console.log(link);
         let res = await this.getImageAction(link);
-        return JSON.stringify(res);
+        return res.image_url;
     }
 
     private async getImageAction(link) {
-        console.log("GET IMAGE ACCTIONNNN ");
         let imageProvider: HtmlPageToImageProvider = new HtmlPageToImageProvider();
         let response = await imageProvider.getImageFromURL(link);
         let jsonResponse: any = JSON.parse(response);
