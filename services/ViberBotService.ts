@@ -2,6 +2,7 @@ import { IBotService } from "./IBotService";
 import * as Repositories from "../repositories/";
 import { Types, kernel } from "../infrastructure/dependency-injection/";
 import { ValidationException } from "../infrastructure/exceptions/";
+import * as Services from "./";
 import * as Entities from "../entities/";
 import * as config from "config";
 import { injectable } from "inversify";
@@ -11,6 +12,8 @@ const ViberBot = require("viber-bot").Bot;
 const BotEvents = require("viber-bot").Events;
 // tslint:disable-next-line:no-var-requires
 const TextMessage = require("viber-bot").Message.Text;
+// tslint:disable-next-line:no-var-requires
+const PictureMessage = require("viber-bot").Message.Picture;
 // tslint:disable-next-line:no-var-requires
 let momentTz = require("moment-timezone");
 
@@ -114,6 +117,14 @@ export class ViberBotService implements IBotService {
             }
         });
 
+        bot.onTextMessage(/^Results|Rezultati$/i, async (message, response) => {
+            let organization  = (await this.getOrganizationRepository().find({oId: domainViberBot.organizationId})).shift();
+            let webPagelink  = organization.data.resultsUrl;
+            let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
+            const pictureMessage = new PictureMessage(imageLink);
+            response.send(pictureMessage);
+        });
+
         bot.onTextMessage(/^schedule$/i, async (message, response) => {
             let scheduleRepo = this.getScheduleRepository();
             let currentTimestamp = (new Date()).toISOString();
@@ -197,5 +208,9 @@ export class ViberBotService implements IBotService {
 
     private getOrganizationRepository(): Repositories.IOrganizationRepository {
         return kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
+    }
+
+    private getWebPageToImgService(): Services.IWebPageToImgService {
+        return kernel.get<Services.IWebPageToImgService>(Types.IWebPageToImgService);
     }
 }
