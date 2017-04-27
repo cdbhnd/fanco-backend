@@ -17,7 +17,8 @@ kernel.bind<Repositories.IEventRepository>(Types.IEventRepository).to(DB.Events)
 kernel.bind<Repositories.IScheduleRepository>(Types.IScheduleRepository).to(DB.Schedules);
 
 kernel.bind<Services.IBotService>(Types.IBotService).to(Services.ViberBotService).inSingletonScope().whenTargetNamed("viber");
-kernel.bind<Services.IBotService>(Types.IBotService).to(Services.FbMessengerService).inSingletonScope().whenTargetNamed("fbmessenger"); ;
+kernel.bind<Services.IBotService>(Types.IBotService).to(Services.FbMessengerService).inSingletonScope().whenTargetNamed("fbmessenger");
+kernel.bind<Services.IWebPageToImgService>(Types.IWebPageToImgService).to(Services.WebPageToImgService);
 // utility
 kernel.bind<ILogger>(Types.Logger).to(Logger).inSingletonScope();
 
