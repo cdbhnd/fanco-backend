@@ -17,6 +17,7 @@
         "accessToken": "76c20aa7e5458961"
     },
     "fBMessengerService": {
-        "avatarImage": "http://www.freeiconspng.com/uploads/fb-icon-11.png"
+        "avatarImage": "http://www.freeiconspng.com/uploads/fb-icon-11.png",
+        "alias": "fbmessenger"
     }
 }

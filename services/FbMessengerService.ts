@@ -27,7 +27,7 @@ export class FbMessengerService implements IBotService {
             organizationId: organization.oId,
             subscribers: [],
             shareableLink: !!data.shareableLink ? data.shareableLink : "",
-            verificationToken: !!data.verificationToken ? data.verificationToken : "",
+            verificationToken: data.name.toUpperCase() + "_" + data.service.toUpperCase(),
             webhook: config.get("baseUrl") + "/fbmessenger/" + data.name,
         });
         await this.initializeBot(bot);
@@ -35,8 +35,9 @@ export class FbMessengerService implements IBotService {
     }
 
     public async initializeAllBots(): Promise<any> {
+        let serviceAlias: string = config.get("fBMessengerService.alias").toString();
         let botRepository = this.getBotRepository();
-        let domainBots: Entities.IBot[] = await botRepository.find({ service: "FbMessenger" });
+        let domainBots: Entities.IBot[] = await botRepository.find({ service: serviceAlias });
 
         for (let i = 0; i < domainBots.length; i++) {
             try {
