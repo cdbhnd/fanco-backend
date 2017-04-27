@@ -142,7 +142,7 @@ export class FbMessengerService implements IBotService {
                 let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
 
                 const out = new Elements();
-                out.add({ text: imageLink });
+                out.add({ image: imageLink });
                 await bot.send(sender.id, out);
             }
         });

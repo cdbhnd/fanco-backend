@@ -13,6 +13,8 @@ const BotEvents = require("viber-bot").Events;
 // tslint:disable-next-line:no-var-requires
 const TextMessage = require("viber-bot").Message.Text;
 // tslint:disable-next-line:no-var-requires
+const PictureMessage = require("viber-bot").Message.Picture;
+// tslint:disable-next-line:no-var-requires
 let momentTz = require("moment-timezone");
 
 @injectable()
@@ -119,7 +121,7 @@ export class ViberBotService implements IBotService {
             let organization  = (await this.getOrganizationRepository().find({oId: domainViberBot.organizationId})).shift();
             let webPagelink  = organization.data.resultsUrl;
             let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
-            response.send(new TextMessage(imageLink));
+            response.send(new PictureMessage(imageLink));
         });
 
         bot.onTextMessage(/^schedule$/i, async (message, response) => {
