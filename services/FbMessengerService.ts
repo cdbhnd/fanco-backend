@@ -113,6 +113,20 @@ export class FbMessengerService implements IBotService {
                 return true;
             }
 
+            // duplicated will be removed Serbian
+            if (message.text.match(/^cao|zdravo$/i)) {
+                let res = await this.addSubscriber(domainBot.name, sender.id, sender.first_name);
+                const out = new Elements();
+                if (res) {
+                    out.add({ text: `Cao ${sender.first_name}. Ja sam ${domainBot.name} bot`  });
+                    await bot.send(sender.id, out);
+                } else {
+                    out.add({ text: `Cao ${sender.first_name}. Mislim da smo se vec upoznali !` });
+                    await bot.send(sender.id, out);
+                }
+                return true;
+            }
+
             if (message.text.match(/^bye|Bye$/i)) {
                 await this.removeSubscriber(domainBot.name, sender.id, sender.first_name);
                 const out = new Elements();
@@ -120,7 +134,15 @@ export class FbMessengerService implements IBotService {
                 await bot.send(sender.id, out);
             }
 
-            if (message.text.match(/^schedule$/i)) {
+            // duplicated will be removed Serbian
+            if (message.text.match(/^odoh|zbogom|ajd$/i)) {
+                await this.removeSubscriber(domainBot.name, sender.id, sender.first_name);
+                const out = new Elements();
+                out.add({ text: `Zbogom ${sender.first_name}. Vidimo se neki drugi put !` });
+                await bot.send(sender.id, out);
+            }
+
+            if (message.text.match(/^schedule|raspored$/i)) {
                 let scheduleRepo = this.getScheduleRepository();
                 let currentTimestamp = (new Date()).toISOString();
                 let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);

@@ -117,6 +117,16 @@ export class ViberBotService implements IBotService {
             }
         });
 
+        // duplicated will be removed Serbian
+        bot.onTextMessage(/^zdravo|cao$/i, async (message, response) => {
+            let res = await this.addSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
+            if (res) {
+                response.send(new TextMessage(`Cao ${response.userProfile.name}. Ja sam ${bot.name} bot`));
+            } else {
+                response.send(new TextMessage(`Cao ${response.userProfile.name}. Mislim da smo se vec upoznali ! :)`));
+            }
+        });
+
         bot.onTextMessage(/^Results|Rezultati$/i, async (message, response) => {
             let organization = (await this.getOrganizationRepository().find({ oId: domainViberBot.organizationId })).shift();
             let webPagelink = organization.data.resultsUrl;
@@ -133,7 +143,7 @@ export class ViberBotService implements IBotService {
             response.send(pictureMessage);
         });
 
-        bot.onTextMessage(/^schedule$/i, async (message, response) => {
+        bot.onTextMessage(/^schedule|raspored$/i, async (message, response) => {
             let scheduleRepo = this.getScheduleRepository();
             let currentTimestamp = (new Date()).toISOString();
             let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainViberBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
@@ -150,6 +160,12 @@ export class ViberBotService implements IBotService {
         bot.onTextMessage(/^bye|Bye$/i, async (message, response) => {
             await this.removeSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
             response.send(new TextMessage(`Farewell ${response.userProfile.name}. I ll be waiting for you to come back`));
+        });
+
+        // duplicated will be removed Serbian
+        bot.onTextMessage(/^zbogom|odoh|ajd$/i, async (message, response) => {
+            await this.removeSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
+            response.send(new TextMessage(`Zbogom ${response.userProfile.name}. Vidimo se neki drugi put !`));
         });
         console.log("Viber bot event added");
 
