@@ -22,7 +22,7 @@ export class Action extends ActionBase<Entities.IBot> {
     };
 
     public async execute(context): Promise<Entities.IBot> {
-        let serviceName = context.service;
+        let serviceName = context.params.service;
         let service: Services.IBotService = kernel.getNamed<Services.IBotService>(Types.IBotService, serviceName);
         let bot: Entities.IBot = await service.createBot(context.params);
         return bot;
