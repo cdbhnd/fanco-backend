@@ -146,6 +146,16 @@ export class FbMessengerService implements IBotService {
                 out.add({ image: imageLink });
                 await bot.send(sender.id, out);
             }
+
+            if (message.text.match(/^Tabela|Table$/i)) {
+                let organization = (await this.getOrganizationRepository().find({ oId: domainBot.organizationId })).shift();
+                let webPagelink = organization.data.tableUrl;
+                let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
+
+                const out = new Elements();
+                out.add({ image: imageLink });
+                await bot.send(sender.id, out);
+            }
         });
     }
 
