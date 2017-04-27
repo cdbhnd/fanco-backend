@@ -157,7 +157,7 @@ export class ViberBotService implements IBotService {
             response.send(new TextMessage(scheduleMessage));
         });
 
-        bot.onTextMessage(/^bye|Bye|zbogom|odoh|ajd$/i, async (message, response) => {
+        bot.onTextMessage(/^bye|Bye$/i, async (message, response) => {
             await this.removeSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
             response.send(new TextMessage(`Farewell ${response.userProfile.name}. I ll be waiting for you to come back`));
         });
