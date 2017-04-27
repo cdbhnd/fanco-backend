@@ -7,7 +7,7 @@ export class HtmlPageToImageProvider {
         console.log(pageUrl);
         let accessKey: string = config.get("html2img.accessToken").toString();
         let url: string = config.get("html2img.url").toString();
-        url += url + "?p2i_url=" + pageUrl + "&p2i_key=" + accessKey + "&p2i_device=0";
+        url += url + "?p2i_url=" + pageUrl + "&p2i_key=" + accessKey + "&p2i_device=0" + "p2i_imageformat=jpg";
         return await request.get(url);
     }
 }

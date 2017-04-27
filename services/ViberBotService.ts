@@ -121,7 +121,8 @@ export class ViberBotService implements IBotService {
             let organization  = (await this.getOrganizationRepository().find({oId: domainViberBot.organizationId})).shift();
             let webPagelink  = organization.data.resultsUrl;
             let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
-            response.send(new PictureMessage(imageLink));
+            const pictureMessage = new PictureMessage(imageLink);
+            response.send(pictureMessage);
         });
 
         bot.onTextMessage(/^schedule$/i, async (message, response) => {
