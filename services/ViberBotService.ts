@@ -108,7 +108,7 @@ export class ViberBotService implements IBotService {
 
         console.log("Viber bot registered");
 
-        bot.onTextMessage(/^hi|hello$/i, async (message, response) => {
+        bot.onTextMessage(/^hi|hello|zdravo|cao$/i, async (message, response) => {
             let res = await this.addSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
             if (res) {
                 response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`));
@@ -133,7 +133,7 @@ export class ViberBotService implements IBotService {
             response.send(pictureMessage);
         });
 
-        bot.onTextMessage(/^schedule$/i, async (message, response) => {
+        bot.onTextMessage(/^schedule|raspored$/i, async (message, response) => {
             let scheduleRepo = this.getScheduleRepository();
             let currentTimestamp = (new Date()).toISOString();
             let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainViberBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
@@ -147,7 +147,7 @@ export class ViberBotService implements IBotService {
             response.send(new TextMessage(scheduleMessage));
         });
 
-        bot.onTextMessage(/^bye|Bye$/i, async (message, response) => {
+        bot.onTextMessage(/^bye|Bye|zbogom|odoh|ajd$/i, async (message, response) => {
             await this.removeSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
             response.send(new TextMessage(`Farewell ${response.userProfile.name}. I ll be waiting for you to come back`));
         });

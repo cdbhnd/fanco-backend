@@ -100,7 +100,7 @@ export class FbMessengerService implements IBotService {
                 return false;
             }
 
-            if (message.text.match(/^hi|hello$/i)) {
+            if (message.text.match(/^hi|hello|cao|zdravo$/i)) {
                 let res = await this.addSubscriber(domainBot.name, sender.id, sender.first_name);
                 const out = new Elements();
                 if (res) {
@@ -113,14 +113,14 @@ export class FbMessengerService implements IBotService {
                 return true;
             }
 
-            if (message.text.match(/^bye|Bye$/i)) {
+            if (message.text.match(/^bye|Bye|odoh|zbogom|ajd$/i)) {
                 await this.removeSubscriber(domainBot.name, sender.id, sender.first_name);
                 const out = new Elements();
                 out.add({ text: `Farewell ${sender.first_name}. I ll be waiting for you to come back !` });
                 await bot.send(sender.id, out);
             }
 
-            if (message.text.match(/^schedule$/i)) {
+            if (message.text.match(/^schedule|raspored$/i)) {
                 let scheduleRepo = this.getScheduleRepository();
                 let currentTimestamp = (new Date()).toISOString();
                 let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
