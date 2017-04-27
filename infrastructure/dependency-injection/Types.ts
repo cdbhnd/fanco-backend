@@ -6,6 +6,7 @@ let Types = {
     IScheduleRepository: Symbol("IScheduleRepository"),
     Logger: Symbol("Logger"),
     IBotService: Symbol("IBotService"),
+    IWebPageToImgService: Symbol("IWebPageToImgService"),
 };
 
 export default Types;
