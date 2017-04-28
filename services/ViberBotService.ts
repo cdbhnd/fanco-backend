@@ -109,7 +109,7 @@ export class ViberBotService implements IBotService {
         console.log("Viber bot registered");
 
         bot.onTextMessage(/^hi|hello$/i, async (message, response) => {
-            let res = await this.addSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
+            let res = await this.addSubscriber(domainViberBot, response.userProfile.id, response.userProfile.name);
             if (res) {
                 response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`));
             } else {
@@ -119,7 +119,7 @@ export class ViberBotService implements IBotService {
 
         // duplicated will be removed Serbian
         bot.onTextMessage(/^zdravo|cao$/i, async (message, response) => {
-            let res = await this.addSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
+            let res = await this.addSubscriber(domainViberBot, response.userProfile.id, response.userProfile.name);
             if (res) {
                 response.send(new TextMessage(`Cao ${response.userProfile.name}. Ja sam ${bot.name} bot`));
             } else {
@@ -158,13 +158,13 @@ export class ViberBotService implements IBotService {
         });
 
         bot.onTextMessage(/^bye|Bye$/i, async (message, response) => {
-            await this.removeSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
+            await this.removeSubscriber(domainViberBot, response.userProfile.id, response.userProfile.name);
             response.send(new TextMessage(`Farewell ${response.userProfile.name}. I ll be waiting for you to come back`));
         });
 
         // duplicated will be removed Serbian
         bot.onTextMessage(/^zbogom|odoh|ajd$/i, async (message, response) => {
-            await this.removeSubscriber(bot.name, response.userProfile.id, response.userProfile.name);
+            await this.removeSubscriber(domainViberBot, response.userProfile.id, response.userProfile.name);
             response.send(new TextMessage(`Zbogom ${response.userProfile.name}. Vidimo se neki drugi put !`));
         });
         console.log("Viber bot event added");
@@ -176,25 +176,25 @@ export class ViberBotService implements IBotService {
         console.log("Webhook configured");
     }
 
-    private async addSubscriber(botName: string, subscriberId: string, subscriberName: string): Promise<boolean> {
+    private async addSubscriber(botDomain: Entities.IBot, subscriberId: string, subscriberName: string): Promise<boolean> {
         let botRepository = this.getBotRepository();
-        let domainViberBot: Entities.IBot = (await botRepository.find({ name: botName })).shift();
-        if (!this.subscriberExist(domainViberBot, subscriberId)) {
-            domainViberBot.subscribers.push({ id: subscriberId, name: subscriberName });
-            await botRepository.update(domainViberBot);
+        let freshDomainBot: Entities.IBot = (await botRepository.find({ name: botDomain.name, service: botDomain.service, organizationId: botDomain.organizationId})).shift();
+        if (!this.subscriberExist(freshDomainBot, subscriberId)) {
+            freshDomainBot.subscribers.push({ id: subscriberId, name: subscriberName });
+            await botRepository.update(freshDomainBot);
             return true;
         }
         return false;
     }
 
-    private async removeSubscriber(botName: string, subscriberId: string, subscriberName: string): Promise<boolean> {
+    private async removeSubscriber(botDomain: Entities.IBot, subscriberId: string, subscriberName: string): Promise<boolean> {
         let botRepository = this.getBotRepository();
-        let domainViberBot: Entities.IBot = (await botRepository.find({ name: botName })).shift();
-        if (!!domainViberBot.subscribers) {
-            for (let i = 0; i < domainViberBot.subscribers.length; i++) {
-                if (domainViberBot.subscribers[i].id == subscriberId) {
-                    domainViberBot.subscribers.splice(i, 1);
-                    await botRepository.update(domainViberBot);
+        let freshDomainBot: Entities.IBot = (await botRepository.find({ name: botDomain.name, service: botDomain.service, organizationId: botDomain.organizationId})).shift();
+        if (!!freshDomainBot.subscribers) {
+            for (let i = 0; i < freshDomainBot.subscribers.length; i++) {
+                if (freshDomainBot.subscribers[i].id == subscriberId) {
+                    freshDomainBot.subscribers.splice(i, 1);
+                    await botRepository.update(freshDomainBot);
                     return true;
                 }
             }
