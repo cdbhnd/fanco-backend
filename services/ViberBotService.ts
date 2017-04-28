@@ -36,7 +36,7 @@ export class ViberBotService implements IBotService {
             subscribers: [],
             shareableLink: !!data.shareableLink ? data.shareableLink : "",
             verificationToken: !!data.verificationToken ? data.verificationToken : "",
-            webhook: config.get("baseUrl") + "/fbmessenger/" + data.name,
+            webhook: config.get("baseUrl") + "/viber/" + data.name,
         });
         await this.initializeBot(bot);
         return bot;
@@ -44,7 +44,7 @@ export class ViberBotService implements IBotService {
 
     public async initializeAllBots(): Promise<any> {
         let botRepository = this.getBotRepository();
-        let domainViberBots: Entities.IBot[] = await botRepository.find({ service: "Viber" });
+        let domainViberBots: Entities.IBot[] = await botRepository.find({ service: /^viber$/i });
 
         for (let i = 0; i < domainViberBots.length; i++) {
             try {
@@ -178,7 +178,7 @@ export class ViberBotService implements IBotService {
 
     private async addSubscriber(botDomain: Entities.IBot, subscriberId: string, subscriberName: string): Promise<boolean> {
         let botRepository = this.getBotRepository();
-        let freshDomainBot: Entities.IBot = (await botRepository.find({ name: botDomain.name, service: botDomain.service, organizationId: botDomain.organizationId})).shift();
+        let freshDomainBot: Entities.IBot = await botRepository.findOne({ id: botDomain.id });
         if (!this.subscriberExist(freshDomainBot, subscriberId)) {
             freshDomainBot.subscribers.push({ id: subscriberId, name: subscriberName });
             await botRepository.update(freshDomainBot);
@@ -189,7 +189,7 @@ export class ViberBotService implements IBotService {
 
     private async removeSubscriber(botDomain: Entities.IBot, subscriberId: string, subscriberName: string): Promise<boolean> {
         let botRepository = this.getBotRepository();
-        let freshDomainBot: Entities.IBot = (await botRepository.find({ name: botDomain.name, service: botDomain.service, organizationId: botDomain.organizationId})).shift();
+        let freshDomainBot: Entities.IBot = await botRepository.findOne({ id: botDomain.id });
         if (!!freshDomainBot.subscribers) {
             for (let i = 0; i < freshDomainBot.subscribers.length; i++) {
                 if (freshDomainBot.subscribers[i].id == subscriberId) {

@@ -10,7 +10,8 @@
     "baseUrl": "https://fanco-server.herokuapp.com",
 
     "viberService": {
-        "avatarImage": "https://lh3.googleusercontent.com/rSQtWt_ahw1QoUtuwZkgNV_k4sRemA0Rd44Un7elH05ZW-DPntl1RoJ0Of8v-nLhgXw"
+        "avatarImage": "https://lh3.googleusercontent.com/rSQtWt_ahw1QoUtuwZkgNV_k4sRemA0Rd44Un7elH05ZW-DPntl1RoJ0Of8v-nLhgXw",
+        "alias": "viber"
     },
 
     "html2img": {

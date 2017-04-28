@@ -183,7 +183,7 @@ export class FbMessengerService implements IBotService {
 
     private async addSubscriber(botDomain: Entities.IBot, subscriberId: string, subscriberName: string): Promise<boolean> {
         let botRepository = this.getBotRepository();
-        let freshDomainBot: Entities.IBot = (await botRepository.find({ name: botDomain.name, service: botDomain.service, organizationId: botDomain.organizationId })).shift();
+        let freshDomainBot: Entities.IBot = await botRepository.findOne({ id: botDomain.id });
         if (!this.subscriberExist(freshDomainBot, subscriberId)) {
             freshDomainBot.subscribers.push({ id: subscriberId, name: subscriberName });
             await botRepository.update(freshDomainBot);
@@ -194,7 +194,7 @@ export class FbMessengerService implements IBotService {
 
     private async removeSubscriber(botDomain: Entities.IBot, subscriberId: string, subscriberName: string): Promise<boolean> {
         let botRepository = this.getBotRepository();
-        let freshDomainBot: Entities.IBot = (await botRepository.find({ name: botDomain.name, service: botDomain.service, organizationId: botDomain.organizationId })).shift();
+        let freshDomainBot: Entities.IBot = await botRepository.findOne({ id: botDomain.id });
         if (!!freshDomainBot.subscribers) {
             for (let i = 0; i < freshDomainBot.subscribers.length; i++) {
                 if (freshDomainBot.subscribers[i].id == subscriberId) {
@@ -207,10 +207,10 @@ export class FbMessengerService implements IBotService {
         return false;
     }
 
-    private subscriberExist(domainViberBot: Entities.IBot, subscriberId: string): boolean {
-        if (!!domainViberBot.subscribers) {
-            for (let i = 0; i < domainViberBot.subscribers.length; i++) {
-                if (domainViberBot.subscribers[i].id == subscriberId) {
+    private subscriberExist(domainBot: Entities.IBot, subscriberId: string): boolean {
+        if (!!domainBot.subscribers) {
+            for (let i = 0; i < domainBot.subscribers.length; i++) {
+                if (domainBot.subscribers[i].id == subscriberId) {
                     return true;
                 }
             }
