@@ -77,14 +77,23 @@ export class ViberBotService implements IBotService {
         try {
             for (let i in this.viberBotObjects) {
                 if (this.viberBotObjects.hasOwnProperty(i)) {
+                    console.log('Nasao Bot-a');
+                    console.log(i);
                     let vBot: any = this.viberBotObjects[i];
                     let botRepository = this.getBotRepository();
-                    let bot: Entities.IBot = (await botRepository.find({ name: i })).shift();
+                    let bot: Entities.IBot = (await botRepository.find({ name: i, service: /^viber$/i })).shift();
+                    if (bot) {
+                        console.log('Bot pronadjen u bazi ');                    
+                    } else {
+                        console.log('Bot nije pronadjen u bazi ');
+                    }
                     if (bot.organizationId != event.organization) {
                         continue;
                     }
+                    console.log('Bot pripada organizaciji');
                     for (let j = 0; j < bot.subscribers.length; j++) {
                         vBot.sendMessage(bot.subscribers[j], new TextMessage(event.content));
+                        console.log('Botu poslata poruka');
                     }
                 }
             }

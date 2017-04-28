@@ -62,7 +62,7 @@ export class FbMessengerService implements IBotService {
                 if (this.fbMessengerBots.hasOwnProperty(i)) {
                     let fbBot: any = this.fbMessengerBots[i];
                     let botRepository = this.getBotRepository();
-                    let bot: Entities.IBot = (await botRepository.find({ name: i })).shift();
+                    let bot: Entities.IBot = (await botRepository.find({ name: i, service: /^fbmessenger$/i })).shift();
                     if (bot.organizationId != event.organization) {
                         continue;
                     }
