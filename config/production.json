@@ -4,8 +4,9 @@
         "saltRounds": 10
     },
     "mongoDbSettings": {
-        "dbUser": "funcoDbAdmin",
-        "dbPassword": "adminadmin"
+        "database": "ds151141.mlab.com:51141/fanco-production",
+        "dbUser": "fanco",
+        "dbPassword": "fanco"
     },
     "baseUrl": "https://fanco-server.herokuapp.com",
     "viberService": {

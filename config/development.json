@@ -4,6 +4,7 @@
         "saltRounds": 10
     },
     "mongoDbSettings": {
+        "database": "ds159220.mlab.com:59220/fanco",
         "dbUser": "funcoDbAdmin",
         "dbPassword": "adminadmin"
     },

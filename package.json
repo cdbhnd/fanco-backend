@@ -8,6 +8,7 @@
     "bcryptjs": "^2.4.0",
     "body-parser": "^1.16.0",
     "config": "^1.24.0",
+    "dropbox": "^2.5.3",
     "express": "^4.14.0",
     "facebook-messenger-bot": "^0.2.0",
     "form-data": "^2.1.2",

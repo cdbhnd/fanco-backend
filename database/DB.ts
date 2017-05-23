@@ -6,7 +6,7 @@ export class DB {
     public static db: mongodb.Db;
 
     public static async init(): Promise<boolean> {
-        DB.db = await DB.dbDriver.MongoClient.connect("mongodb://" + config.get("mongoDbSettings.dbUser") + ":" + config.get("mongoDbSettings.dbPassword") + "@ds159220.mlab.com:59220/fanco");
+        DB.db = await DB.dbDriver.MongoClient.connect("mongodb://" + config.get("mongoDbSettings.dbUser") + ":" + config.get("mongoDbSettings.dbPassword") + "@" + config.get("mongoDbSettings.database"));
         return true;
     }
 }
