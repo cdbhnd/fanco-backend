@@ -65,7 +65,7 @@ export class EventController {
             type: 'image',
             userId: userId,
             organization: orgId,
-            content: file.path
+            content: config.get("assetsFolder").toString() + '/' + file.filename
         };
         return await createEventAction.run(actionContext);
     }
