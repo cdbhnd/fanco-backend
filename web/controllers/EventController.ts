@@ -52,24 +52,21 @@ export class EventController {
         return await createEventAction.run(actionContext);
     }
 
-    @Post("/organization/:orgId/files")
+    @Post("/organization/:orgId/images")
     @UseBefore(AuthMiddleware)
     @HttpCode(200)
     @HttpError(400, ExceptionTypes.ValidationException)
     @HttpError(403, ExceptionTypes.UserNotAuthorizedException)
-    public async createFileEvent(@UploadedFile("fileName", { uploadOptions: FILE_UPLOAD_OPTIONS }) file: any, @Param("userId") userId: string, @Param("orgId") orgId: string) {
+    public async createImageEvent(@UploadedFile("fileName", { uploadOptions: FILE_UPLOAD_OPTIONS }) file: any, @Param("userId") userId: string, @Param("orgId") orgId: string) {
         console.log(file);
         let createEventAction = new actions.CreateEvent.Action();
         let actionContext = new ActionContext();
         actionContext.params = {
-            params: {
-                type: 'file',
-                userId: userId,
-                organization: orgId,
-                content: file
-            }
+            type: 'image',
+            userId: userId,
+            organization: orgId,
+            content: file.path
         };
-        //return await createEventAction.run(actionContext);
-        return { status: "cool" };
+        return await createEventAction.run(actionContext);
     }
 }

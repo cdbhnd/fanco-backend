@@ -68,7 +68,11 @@ export class FbMessengerService implements IBotService {
                     }
                     for (let j = 0; j < bot.subscribers.length; j++) {
                         const out = new Elements();
-                        out.add({ text: event.content });
+                        if (event.type == "image") {
+                            out.add({ image: event.content });
+                        } else {
+                            out.add({ text: event.content });
+                        }
                         await fbBot.send(bot.subscribers[j].id, out);
                     }
                 }

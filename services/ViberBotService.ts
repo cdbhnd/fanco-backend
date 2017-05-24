@@ -92,7 +92,11 @@ export class ViberBotService implements IBotService {
                     }
                     console.log('Bot pripada organizaciji');
                     for (let j = 0; j < bot.subscribers.length; j++) {
-                        vBot.sendMessage(bot.subscribers[j], new TextMessage(event.content));
+                        if (event.type == "image") {
+                            vBot.sendMessage(bot.subscribers[j], new PictureMessage(event.content));
+                        } else {
+                            vBot.sendMessage(bot.subscribers[j], new TextMessage(event.content));
+                        }
                         console.log('Botu poslata poruka');
                     }
                 }
