@@ -7,6 +7,7 @@ let Types = {
     Logger: Symbol("Logger"),
     IBotService: Symbol("IBotService"),
     IWebPageToImgService: Symbol("IWebPageToImgService"),
+    IDropBoxProvider: Symbol("IDropBoxProvider"),
 };
 
 export default Types;
