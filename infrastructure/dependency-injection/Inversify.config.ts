@@ -7,6 +7,7 @@ import * as DB from "../../database/index";
 import * as actions from "../../actions";
 import {Logger} from "../logger/Logger";
 import {ILogger} from "../logger/ILogger";
+import * as Providers from "../../providers/";
 
 let kernel = new Kernel();
 
@@ -15,6 +16,8 @@ kernel.bind<Repositories.IBotRepository>(Types.IBotRepository).to(DB.Bots);
 kernel.bind<Repositories.IOrganizationRepository>(Types.IOrganizationRepository).to(DB.Organizations);
 kernel.bind<Repositories.IEventRepository>(Types.IEventRepository).to(DB.Events);
 kernel.bind<Repositories.IScheduleRepository>(Types.IScheduleRepository).to(DB.Schedules);
+kernel.bind<Providers.IDropBoxProvider>(Types.IDropBoxProvider).to(Providers.DropBoxProvider);
+kernel.bind<Services.IStorageService>(Types.IStorageService).to(Services.StorageService);
 
 kernel.bind<Services.IBotService>(Types.IBotService).to(Services.ViberBotService).inSingletonScope().whenTargetNamed("viber");
 kernel.bind<Services.IBotService>(Types.IBotService).to(Services.FbMessengerService).inSingletonScope().whenTargetNamed("fbmessenger");
