@@ -134,9 +134,13 @@ export class ViberBotService implements IBotService {
         bot.onTextMessage(/^zdravo|cao$/i, async (message, response) => {
             let res = await this.addSubscriber(domainViberBot, response.userProfile.id, response.userProfile.name);
             if (res) {
-                response.send(new TextMessage(`Cao ${response.userProfile.name}. Ja sam ${bot.name} bot`));
+                response.send(new TextMessage(`Zdravo ja sam ${bot.name} bot. Slanjem ovem poruke ste se pretplatili da uživo dobijate najsvežije informacije iz našeg kluba. \n ` +
+                    `Da biste dobili trenutno stanje na tabeli pošaljite 'tabela'. \n` +
+                    `Da biste dobili rezultate poslednjeg kola pošaljite 'rez'. \n` +
+                    `Da biste saznali kada igramo sledeću utakmicu pošaljite 'kad igramo?'. \n` +
+                    `Ako želite da prestanete da dobijate poruke uživo sa naših utakmica pošaljite 'stop'.`));
             } else {
-                response.send(new TextMessage(`Cao ${response.userProfile.name}. Mislim da smo se vec upoznali ! :)`));
+                response.send(new TextMessage(`Zdravo ja sam ${bot.name}. Mislim da smo se vec upoznali !`));
             }
         });
 
@@ -176,7 +180,7 @@ export class ViberBotService implements IBotService {
         });
 
         // duplicated will be removed Serbian
-        bot.onTextMessage(/^zbogom|odoh|ajd$/i, async (message, response) => {
+        bot.onTextMessage(/^zbogom|odoh|ajd|stop$/i, async (message, response) => {
             await this.removeSubscriber(domainViberBot, response.userProfile.id, response.userProfile.name);
             response.send(new TextMessage(`Zbogom ${response.userProfile.name}. Vidimo se neki drugi put !`));
         });

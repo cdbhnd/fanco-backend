@@ -122,10 +122,14 @@ export class FbMessengerService implements IBotService {
                 let res = await this.addSubscriber(domainBot, sender.id, sender.first_name);
                 const out = new Elements();
                 if (res) {
-                    out.add({ text: `Cao ${sender.first_name}. Ja sam ${domainBot.name} bot` });
+                    out.add({ text: `Zdravo ja sam ${domainBot.name} bot. Slanjem ovem poruke ste se pretplatili da uživo dobijate najsvežije informacije iz našeg kluba. \n ` +
+                    `Da biste dobili trenutno stanje na tabeli pošaljite 'tabela'. \n` +
+                    `Da biste dobili rezultate poslednjeg kola pošaljite 'rez'. \n` +
+                    `Da biste saznali kada igramo sledeću utakmicu pošaljite 'kad igramo?'. \n` +
+                    `Ako želite da prestanete da dobijate poruke uživo sa naših utakmica pošaljite 'stop'.` });
                     await bot.send(sender.id, out);
                 } else {
-                    out.add({ text: `Cao ${sender.first_name}. Mislim da smo se vec upoznali !` });
+                    out.add({ text: `Zdravo ja sam ${domainBot.name}. Mislim da smo se vec upoznali !` });
                     await bot.send(sender.id, out);
                 }
                 return true;
@@ -139,14 +143,14 @@ export class FbMessengerService implements IBotService {
             }
 
             // duplicated will be removed Serbian
-            if (message.text.match(/^odoh|zbogom|ajd$/i)) {
+            if (message.text.match(/^zbogom|odoh|ajd|stop$/i)) {
                 await this.removeSubscriber(domainBot, sender.id, sender.first_name);
                 const out = new Elements();
                 out.add({ text: `Zbogom ${sender.first_name}. Vidimo se neki drugi put !` });
                 await bot.send(sender.id, out);
             }
 
-            if (message.text.match(/^schedule|raspored$/i)) {
+            if (message.text.match(/^schedule|raspored|Kada igramo|Kad igramo|Kada igramo?|Kad igramo?$/i)) {
                 let scheduleRepo = this.getScheduleRepository();
                 let currentTimestamp = (new Date()).toISOString();
                 let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
@@ -154,7 +158,7 @@ export class FbMessengerService implements IBotService {
 
                 for (let i = 0; i < schedules.length; i++) {
                     let atTimeMessage = this.generateAtWhatTimeMessage(schedules[i].timestamp);
-                    scheduleMessage = scheduleMessage + atTimeMessage + "\n" + schedules[i].description + "\n\n";
+                    scheduleMessage = scheduleMessage + atTimeMessage + "\n" + schedules[i].description + "\n";
 
                 }
 
@@ -163,7 +167,7 @@ export class FbMessengerService implements IBotService {
                 await bot.send(sender.id, out);
             }
 
-            if (message.text.match(/^Results|Rezultati$/i)) {
+            if (message.text.match(/^Results|Rezultati|Rez|Rezultat$/i)) {
                 let organization = (await this.getOrganizationRepository().find({ oId: domainBot.organizationId })).shift();
                 let webPagelink = organization.data.resultsUrl;
                 let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);

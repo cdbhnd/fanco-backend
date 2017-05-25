@@ -4,9 +4,9 @@
         "saltRounds": 10
     },
     "mongoDbSettings": {
-        "database": "ds159220.mlab.com:59220/fanco",
-        "dbUser": "funcoDbAdmin",
-        "dbPassword": "adminadmin"
+        "database": "ds151141.mlab.com:51141/fanco-production",
+        "dbUser": "fanco",
+        "dbPassword": "fanco"
     },
     "baseUrl": "https://fanco-production.herokuapp.com",
     "assetsFolder": "https://fanco-production.herokuapp.com",
