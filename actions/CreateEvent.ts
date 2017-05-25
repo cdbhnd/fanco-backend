@@ -8,6 +8,7 @@ import * as Password from "../utility/Password";
 import { ActionBase } from "./ActionBase";
 import { ActionContext } from "./ActionBase";
 import * as Services from "../services/index";
+import * as cloudinary from "cloudinary";
 
 export class Action extends ActionBase<Entities.IEvent> {
     private eventRepository: Repositories.IEventRepository;
@@ -15,6 +16,7 @@ export class Action extends ActionBase<Entities.IEvent> {
     private adminRepository: Repositories.IAdminUserRepository;
     private viberBotService: Services.IBotService;
     private fBmessengerService: Services.IBotService;
+    private storageService: Services.IStorageService;
 
     constructor() {
         super();
@@ -23,19 +25,26 @@ export class Action extends ActionBase<Entities.IEvent> {
         this.adminRepository = kernel.get<Repositories.IAdminUserRepository>(Types.IAdminUserRepository);
         this.viberBotService =  kernel.getNamed<Services.IBotService>(Types.IBotService, "viber");
         this.fBmessengerService = kernel.getNamed<Services.IBotService>(Types.IBotService, "fbmessenger");
+        this.storageService = kernel.get<Services.IStorageService>(Types.IStorageService);
     };
 
     public async execute(context): Promise<Entities.IEvent> {
         let organization: Entities.IOrganization = context.params.organization;
         let user: Entities.IAdminUser = context.params.user;
 
-        let event: Entities.IEvent =  await this.eventRepository.create({
+        let event: Entities.IEvent = {
             type: context.params.type,
             content: context.params.content,
             timestamp: (new Date()).toISOString(),
             organization: organization.oId,
             postedBy: user.email,
-        });
+        };
+
+        if (event.type == "image") {
+            event.content = await this.storageService.uploadFile(event.content, organization);
+        }
+
+        event =  await this.eventRepository.create(event);
 
         await this.viberBotService.publishEvent(event);
         await this.fBmessengerService.publishEvent(event);
