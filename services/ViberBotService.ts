@@ -140,7 +140,7 @@ export class ViberBotService implements IBotService {
             }
         });
 
-        bot.onTextMessage(/^Results|Rezultati$/i, async (message, response) => {
+        bot.onTextMessage(/^Results|Rezultati|Rez|Rezultat$/i, async (message, response) => {
             let organization = (await this.getOrganizationRepository().find({ oId: domainViberBot.organizationId })).shift();
             let webPagelink = organization.data.resultsUrl;
             let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
@@ -156,7 +156,7 @@ export class ViberBotService implements IBotService {
             response.send(pictureMessage);
         });
 
-        bot.onTextMessage(/^schedule|raspored$/i, async (message, response) => {
+        bot.onTextMessage(/^schedule|raspored|Kada igramo|Kad igramo|Kada igramo?|Kad igramo?$/i, async (message, response) => {
             let scheduleRepo = this.getScheduleRepository();
             let currentTimestamp = (new Date()).toISOString();
             let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainViberBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
@@ -231,7 +231,7 @@ export class ViberBotService implements IBotService {
         let date = dateObj.format("DD/MM/YYYY");
         let time = dateObj.format("HH:mm");
 
-        let scheduleItemAtTime = date + " at " + time;
+        let scheduleItemAtTime = date + " u " + time;
         return scheduleItemAtTime;
     }
 

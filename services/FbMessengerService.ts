@@ -227,7 +227,7 @@ export class FbMessengerService implements IBotService {
         let date = dateObj.format("DD/MM/YYYY");
         let time = dateObj.format("HH:mm");
 
-        let scheduleItemAtTime = date + " at " + time;
+        let scheduleItemAtTime = date + " u " + time;
         return scheduleItemAtTime;
     }
 
