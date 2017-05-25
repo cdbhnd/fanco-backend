@@ -25,7 +25,7 @@ export class StorageService implements IStorageService {
                     } else {
                         resolve(result.secure_url);
                     }
-                });
+                }, { width: 1000 });
             } else {
                 resolve(url);
             }
