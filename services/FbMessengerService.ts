@@ -186,6 +186,25 @@ export class FbMessengerService implements IBotService {
                 out.add({ image: imageLink });
                 await bot.send(sender.id, out);
             }
+
+            /** DUMMY KEYWORDS */
+            if (message.text.match(/^pozicija na tabeli$/i)) {
+                const out = new Elements();
+                out.add({ text: `FK Jedinstvo UB je trenutno na drugoj poziciji` });
+                await bot.send(sender.id, out);
+            }
+
+            if (message.text.match(/^poslednja utakmica$/i)) {
+                const out = new Elements();
+                out.add({ text: `Poslednja utakmica: FK Jedinstvo UB - Radjevac 3:0` });
+                await bot.send(sender.id, out);
+            }
+
+            if (message.text.match(/^najbolji strelac$/i)) {
+                const out = new Elements();
+                out.add({ text: `Najbolji strelac FK Jedinstva sa Ub-a je Alempijevic Jovica` });
+                await bot.send(sender.id, out);
+            }
         });
     }
 
