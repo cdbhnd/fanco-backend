@@ -24,7 +24,8 @@ export abstract class BaseBotService implements IBotService {
         handshake: "handshake",
         webscreenshot: "getWebsiteScreenshot",
         schedule: "getSchedule",
-        farewell: "farewell"
+        farewell: "farewell",
+        genericText: "genericText"
     };
 
     public async createBot(data: any): Promise<Entities.IBot> {
@@ -65,6 +66,12 @@ export abstract class BaseBotService implements IBotService {
     public async getWebsiteScreenshot(botAction: Entities.IAction): Promise<string> {
         let webPagelink = botAction.data;
         return await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
+    }
+
+    public async genericText(botAction: Entities.IAction): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            return botAction.data;
+        });
     }
 
     public async getSchedule(botAction: Entities.IAction, bot: Entities.IBot): Promise<string> {

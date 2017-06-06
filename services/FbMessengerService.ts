@@ -56,7 +56,7 @@ export class FbMessengerService extends BaseBotService {
         }
     }
 
-    protected initializeBot(domainBot: Entities.IBot): void {
+    protected async initializeBot(domainBot: Entities.IBot) {
         const bot = new Bot(domainBot.token, domainBot.verificationToken);
 
         console.log("Facebook Messenger bot created !");
@@ -64,6 +64,10 @@ export class FbMessengerService extends BaseBotService {
         this.fbMessengerBots[domainBot.name] = bot;
 
         console.log("Facebook Messenger bot registered");
+
+        let botActionsRepo: Repositories.IBotActionsRepository = kernel.get<Repositories.IBotActionsRepository>(Types.IBotActionsRepository);
+
+        let botActions: Entities.IBotActions = await botActionsRepo.findOne({ oId: domainBot.organizationId });
 
         // on message
         bot.on("message", async (message) => {
@@ -76,106 +80,23 @@ export class FbMessengerService extends BaseBotService {
                 return false;
             }
 
-            if (message.text.match(/^hi|hello$/i)) {
-                let res = await this.addSubscriber(domainBot, sender.id, sender.first_name);
-                const out = new Elements();
-                if (res) {
-                    out.add({ text: `Hi there ${sender.first_name}. I am ${domainBot.name}` });
-                    await bot.send(sender.id, out);
-                } else {
-                    out.add({ text: `Hi ${sender.first_name}. I think we've already met !` });
-                    await bot.send(sender.id, out);
+            for (let i = 0; i < botActions.actions.length; i++) {
+                let botAction: Entities.IAction = botActions.actions[i];
+                let action: string = this.actionList[botAction.action];
+                if (!action) {
+                    continue;
                 }
-                return true;
-            }
-
-            // duplicated will be removed Serbian
-            if (message.text.match(/^cao|zdravo$/i)) {
-                let res = await this.addSubscriber(domainBot, sender.id, sender.first_name);
-                const out = new Elements();
-                if (res) {
-                    out.add({ text: `Zdravo ja sam ${domainBot.name} bot. Slanjem ovem poruke ste se pretplatili da uživo dobijate najsvežije informacije iz našeg kluba. \n ` +
-                    `Da biste dobili trenutno stanje na tabeli pošaljite 'tabela'. \n` +
-                    `Da biste dobili rezultate poslednjeg kola pošaljite 'rez'. \n` +
-                    `Da biste saznali kada igramo sledeću utakmicu pošaljite 'kad igramo?'. \n` +
-                    `Ako želite da prestanete da dobijate poruke uživo sa naših utakmica pošaljite 'stop'.` });
-                    await bot.send(sender.id, out);
-                } else {
-                    out.add({ text: `Zdravo ja sam ${domainBot.name}. Mislim da smo se vec upoznali !` });
-                    await bot.send(sender.id, out);
+                if (message.text.match(new RegExp(botAction.keywords))) {
+                    console.log("Facebook messenger: " + botAction.keywords + " has been captured");
+                    let answer: string = await this[action](botAction, domainBot, message.text, null);
+                    const out = new Elements();
+                    if (botAction.responseType == "image") {
+                        out.add({ image: answer });
+                    } else {
+                        out.add({ text: answer });
+                    }
+                    bot.send(sender.id, out);                    
                 }
-                return true;
-            }
-
-            if (message.text.match(/^bye|Bye$/i)) {
-                await this.removeSubscriber(domainBot, sender.id, sender.first_name);
-                const out = new Elements();
-                out.add({ text: `Farewell ${sender.first_name}. I ll be waiting for you to come back !` });
-                await bot.send(sender.id, out);
-            }
-
-            // duplicated will be removed Serbian
-            if (message.text.match(/^zbogom|odoh|ajd|stop$/i)) {
-                await this.removeSubscriber(domainBot, sender.id, sender.first_name);
-                const out = new Elements();
-                out.add({ text: `Zbogom ${sender.first_name}. Vidimo se neki drugi put !` });
-                await bot.send(sender.id, out);
-            }
-
-            if (message.text.match(/^schedule|raspored|Kada igramo|Kad igramo|Kada igramo?|Kad igramo?$/i)) {
-                let scheduleRepo = this.getScheduleRepository();
-                let currentTimestamp = (new Date()).toISOString();
-                let schedules: Entities.ISchedule[] = (await scheduleRepo.find({ $query: { timestamp: { $gt: currentTimestamp }, organizationId: domainBot.organizationId }, $orderby: { timestamp: 1 } })).slice(0, 3);
-                let scheduleMessage: string = "";
-
-                for (let i = 0; i < schedules.length; i++) {
-                    let atTimeMessage = this.generateAtWhatTimeMessage(schedules[i].timestamp);
-                    scheduleMessage = scheduleMessage + atTimeMessage + "\n" + schedules[i].description + "\n";
-
-                }
-
-                const out = new Elements();
-                out.add({ text: scheduleMessage });
-                await bot.send(sender.id, out);
-            }
-
-            if (message.text.match(/^Results|Rezultati|Rez|Rezultat$/i)) {
-                let organization = (await this.getOrganizationRepository().find({ oId: domainBot.organizationId })).shift();
-                let webPagelink = organization.data.resultsUrl;
-                let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
-
-                const out = new Elements();
-                out.add({ image: imageLink });
-                await bot.send(sender.id, out);
-            }
-
-            if (message.text.match(/^Tabela|Table$/i)) {
-                let organization = (await this.getOrganizationRepository().find({ oId: domainBot.organizationId })).shift();
-                let webPagelink = organization.data.tableUrl;
-                let imageLink = await this.getWebPageToImgService().getPageImgByUrl(webPagelink);
-
-                const out = new Elements();
-                out.add({ image: imageLink });
-                await bot.send(sender.id, out);
-            }
-
-            /** DUMMY KEYWORDS */
-            if (message.text.match(/^pozicija na tabeli$/i)) {
-                const out = new Elements();
-                out.add({ text: `FK Jedinstvo UB je trenutno na drugoj poziciji` });
-                await bot.send(sender.id, out);
-            }
-
-            if (message.text.match(/^poslednja utakmica$/i)) {
-                const out = new Elements();
-                out.add({ text: `Poslednja utakmica: FK Jedinstvo UB - Radjevac 3:0` });
-                await bot.send(sender.id, out);
-            }
-
-            if (message.text.match(/^najbolji strelac$/i)) {
-                const out = new Elements();
-                out.add({ text: `Najbolji strelac FK Jedinstva sa Ub-a je Alempijevic Jovica` });
-                await bot.send(sender.id, out);
             }
         });
     }
