@@ -10,6 +10,7 @@ let Types = {
     IDropBoxProvider: Symbol("IDropBoxProvider"),
     IStorageService: Symbol("IStorageService"),
     IBotActionsRepository: Symbol("IBotActionsRepository"),
+    IPollRepository: Symbol("IPollRepository"),
 };
 
 export default Types;

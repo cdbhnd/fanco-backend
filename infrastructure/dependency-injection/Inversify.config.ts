@@ -18,6 +18,7 @@ kernel.bind<Repositories.IScheduleRepository>(Types.IScheduleRepository).to(DB.S
 kernel.bind<Providers.IDropBoxProvider>(Types.IDropBoxProvider).to(Providers.DropBoxProvider);
 kernel.bind<Services.IStorageService>(Types.IStorageService).to(Services.StorageService);
 kernel.bind<Repositories.IBotActionsRepository>(Types.IBotActionsRepository).to(DB.BotActions);
+kernel.bind<Repositories.IPollRepository>(Types.IPollRepository).to(DB.Polls);
 
 kernel.bind<Services.IBotService>(Types.IBotService).to(Services.ViberBotService).inSingletonScope().whenTargetNamed("viber");
 kernel.bind<Services.IBotService>(Types.IBotService).to(Services.FbMessengerService).inSingletonScope().whenTargetNamed("fbmessenger");
