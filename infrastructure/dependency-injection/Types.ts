@@ -9,6 +9,7 @@ let Types = {
     IWebPageToImgService: Symbol("IWebPageToImgService"),
     IDropBoxProvider: Symbol("IDropBoxProvider"),
     IStorageService: Symbol("IStorageService"),
+    IBotActionsRepository: Symbol("IBotActionsRepository"),
 };
 
 export default Types;

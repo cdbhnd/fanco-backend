@@ -4,3 +4,4 @@ export * from "./IOrganizationRepository";
 export * from "./IBotRepository";
 export * from "./IEventRepository";
 export * from "./IScheduleRepository";
+export * from "./IBotActionsRepository";

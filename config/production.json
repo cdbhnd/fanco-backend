@@ -4,17 +4,16 @@
         "saltRounds": 10
     },
     "mongoDbSettings": {
-        "database": "ds151141.mlab.com:51141/fanco-production",
-        "dbUser": "fanco",
-        "dbPassword": "fanco"
+        "database": "ds159220.mlab.com:59220/fanco",
+        "dbUser": "funcoDbAdmin",
+        "dbPassword": "adminadmin"
     },
-    "baseUrl": "https://fanco-production.herokuapp.com",
-    "assetsFolder": "https://fanco-production.herokuapp.com",
+    "baseUrl": "https://fanco-server.herokuapp.com",
+    "assetsFolder": "https://fanco-server.herokuapp.com",
     "viberService": {
         "avatarImage": "https://lh3.googleusercontent.com/rSQtWt_ahw1QoUtuwZkgNV_k4sRemA0Rd44Un7elH05ZW-DPntl1RoJ0Of8v-nLhgXw",
         "alias": "viber"
     },
-
     "html2img": {
         "url": "http://api.page2images.com/restfullink",
         "accessToken": "76c20aa7e5458961"
