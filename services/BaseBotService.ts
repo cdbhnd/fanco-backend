@@ -70,7 +70,8 @@ export abstract class BaseBotService implements IBotService {
 
     public async genericText(botAction: Entities.IAction): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            return botAction.data;
+            resolve(botAction.data);
+            return;
         });
     }
 
