@@ -12,6 +12,10 @@ import * as GetSchedules from "./GetSchedules";
 import * as GetOneSchedule from "./GetOneSchedule";
 import * as CreateSchedule from "./CreateSchedule";
 import * as DeleteSchedule from "./DeleteSchedule";
+import * as GetPolls from "./GetPolls";
+import * as CreatePoll from "./CreatePoll";
+import * as UpdatePoll from "./UpdatePoll";
+import * as DeletePoll from "./DeletePoll";
 export {ActionContext, ActionBase, AdminLogin,
     CreateOrganizationBot, GetOrganizationBots, GetOrganizationBot, DeleteOrganizationBot, InitializeAllBots,
-    GetEvents, CreateEvent, GetSchedules, GetOneSchedule, CreateSchedule, DeleteSchedule};
+    GetEvents, CreateEvent, GetSchedules, GetOneSchedule, CreateSchedule, DeleteSchedule, GetPolls, CreatePoll, UpdatePoll, DeletePoll};
