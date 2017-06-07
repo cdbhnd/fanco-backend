@@ -86,7 +86,7 @@ export class FbMessengerService extends BaseBotService {
                 if (!action) {
                     continue;
                 }
-                if (message.text.match(new RegExp(botAction.keywords))) {
+                if (message.text.match(new RegExp(botAction.keywords, "i"))) {
                     console.log("Facebook messenger: " + botAction.keywords + " has been captured");
                     let answer: string = await this[action](botAction, domainBot, message.text, sender.id, sender.first_name);
                     const out = new Elements();

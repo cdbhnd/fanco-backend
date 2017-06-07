@@ -27,7 +27,8 @@ export abstract class BaseBotService implements IBotService {
         farewell: "farewell",
         genericText: "genericText",
         pollOptions: "pollOptions",
-        pollVote: "pollVote"
+        pollVote: "pollVote",
+        pollResults: "pollResults"
     };
 
     public async createBot(data: any): Promise<Entities.IBot> {
@@ -144,11 +145,17 @@ export abstract class BaseBotService implements IBotService {
         if (!poll) {
             throw new Exceptions.EntityNotFoundException("Poll", botAction.data);
         }
+        if (!poll.active) {
+            return "Nazalost, glasanje vise nije moguce";
+        }
+        if (new Date(poll.deadline) < new Date()) {
+            return "Nazalost, vreme za glasanje je isteklo";
+        }
         let pollOptions: string = "Opcije za glasanje: \n";
         for (let i = 0; i < poll.options.length; i++) {
             pollOptions += "(" + poll.options[i].id + ") " + poll.options[i].name + "\n";
         }
-        pollOptions += "Posaljite 'Glasanje BROJ_OPCIJE' da bi glasali za Vaseg favorita.";
+        pollOptions += "Posaljite 'Glasanje (BROJ_OPCIJE)' da bi glasali za Vaseg favorita.";
         return pollOptions;
     }
 
@@ -156,6 +163,15 @@ export abstract class BaseBotService implements IBotService {
         try {
             let pollRepo: Repositories.IPollRepository = await this.getPollRepository();
             let poll: Entities.IPoll = await pollRepo.findOne({ pId: botAction.data });
+            if (!poll) {
+                throw new Exceptions.EntityNotFoundException("Poll", botAction.data);
+            }
+            if (!poll.active) {
+                return "Nazalost, glasanje vise nije moguce";
+            }
+            if (new Date(poll.deadline) < new Date()) {
+                return "Nazalost, vreme za glasanje je isteklo";
+            }
             let pollVotesRepo: Repositories.IPollVoteRepository = await this.getPollVoteRepository();
             let existingVote: Entities.IPollVote = await pollVotesRepo.findOne({ user: userId, pId: poll.pId });
             if (!!existingVote) {
@@ -176,6 +192,27 @@ export abstract class BaseBotService implements IBotService {
             console.log(err);
             return await this.pollOptions(botAction, bot);
         }
+    }
+
+    public async pollResults(botAction: Entities.IAction, bot: Entities.IBot): Promise<string> {
+        let pollRepo: Repositories.IPollRepository = await this.getPollRepository();
+        let poll: Entities.IPoll = await pollRepo.findOne({ pId: botAction.data });
+        if (!poll) {
+            throw new Exceptions.EntityNotFoundException("Poll", botAction.data);
+        }
+        if (!poll.active) {
+            return "Nazalost, glasanje vise nije moguce";
+        }
+        if (new Date(poll.deadline) < new Date()) {
+            return "Nazalost, vreme za glasanje je isteklo";
+        }
+        let pollVotesRepo: Repositories.IPollVoteRepository = await this.getPollVoteRepository();
+        let pollResults: string = "Trenutni rezultat: \n";
+        for (let i = 0; i < poll.options.length; i++) {
+            let results:Entities.IPollVote[] = await pollVotesRepo.find({ pId: poll.pId, voteOption: poll.options[i].id });
+            pollResults += "(" + poll.options[i].id + ") " + poll.options[i].name + ":" + results.length + " glasova \n";
+        }
+        return pollResults;
     }
 
     protected async addSubscriber(botDomain: Entities.IBot, subscriberId: string, subscriberName: string): Promise<boolean> {
