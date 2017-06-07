@@ -6,3 +6,4 @@ export * from "./IEventRepository";
 export * from "./IScheduleRepository";
 export * from "./IBotActionsRepository";
 export * from "./IPollRepository";
+export * from "./IPollVoteRepository";

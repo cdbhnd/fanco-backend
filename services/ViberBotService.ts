@@ -92,7 +92,7 @@ export class ViberBotService extends BaseBotService {
             }
             bot.onTextMessage(new RegExp(botAction.keywords, "i"), async (message, response) => {
                 console.log("Ahaaaaa " + botAction.keywords + " has been captured");
-                let answer: string = await this[action](botAction, domainBot, message, response);
+                let answer: string = await this[action](botAction, domainBot, message, response.userProfile.id, response.userProfile.name);
                 if (botAction.responseType == "image") {
                     response.send(new PictureMessage(answer));
                 } else {

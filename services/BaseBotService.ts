@@ -1,7 +1,7 @@
 import { IBotService } from "./IBotService";
 import * as Repositories from "../repositories/";
 import { Types, kernel } from "../infrastructure/dependency-injection/";
-import { ValidationException } from "../infrastructure/exceptions/";
+import * as Exceptions from "../infrastructure/exceptions/";
 import * as Services from "./";
 import * as Entities from "../entities/";
 import * as config from "config";
@@ -25,7 +25,9 @@ export abstract class BaseBotService implements IBotService {
         webscreenshot: "getWebsiteScreenshot",
         schedule: "getSchedule",
         farewell: "farewell",
-        genericText: "genericText"
+        genericText: "genericText",
+        pollOptions: "pollOptions",
+        pollVote: "pollVote"
     };
 
     public async createBot(data: any): Promise<Entities.IBot> {
@@ -118,8 +120,8 @@ export abstract class BaseBotService implements IBotService {
         return true;
     }
 
-    public async handshake(botAction: Entities.IAction, bot: Entities.IBot, message: string, response: any): Promise<string> {
-        let res: boolean = await this.addSubscriber(bot, response.userProfile.id, response.userProfile.name);
+    public async handshake(botAction: Entities.IAction, bot: Entities.IBot, message: string, userId: string, userName: string): Promise<string> {
+        let res: boolean = await this.addSubscriber(bot, userId, userName);
         if (res) {
             return `Zdravo ja sam ${bot.name} bot. Slanjem ovem poruke ste se pretplatili da uživo dobijate najsvežije informacije iz našeg kluba. \n ` +
                 `Da biste dobili trenutno stanje na tabeli pošaljite 'tabela'. \n` +
@@ -131,9 +133,49 @@ export abstract class BaseBotService implements IBotService {
         }
     }
 
-    public async farewell(botAction: Entities.IAction, bot: Entities.IBot, message: string, response: any): Promise<string> {
-        await this.removeSubscriber(bot, response.userProfile.id, response.userProfile.name);
-        return `Farewell ${response.userProfile.name}. I ll be waiting for you to come back`;
+    public async farewell(botAction: Entities.IAction, bot: Entities.IBot, message: string, userId: string, userName: string): Promise<string> {
+        await this.removeSubscriber(bot, userId, userName);
+        return `Farewell ${userName}. I ll be waiting for you to come back`;
+    }
+
+    public async pollOptions(botAction: Entities.IAction, bot: Entities.IBot): Promise<string> {
+        let pollRepo: Repositories.IPollRepository = await this.getPollRepository();
+        let poll: Entities.IPoll = await pollRepo.findOne({ pId: botAction.data });
+        if (!poll) {
+            throw new Exceptions.EntityNotFoundException("Poll", botAction.data);
+        }
+        let pollOptions: string = "Opcije za glasanje: \n";
+        for (let i = 0; i < poll.options.length; i++) {
+            pollOptions += "(" + poll.options[i].id + ") " + poll.options[i].name + "\n";
+        }
+        pollOptions += "Posaljite 'Glasanje BROJ_OPCIJE' da bi glasali za Vaseg favorita.";
+        return pollOptions;
+    }
+
+    public async pollVote(botAction: Entities.IAction, bot: Entities.IBot, message: string, userId: string): Promise<string> {
+        let pollRepo: Repositories.IPollRepository = await this.getPollRepository();
+        let poll: Entities.IPoll = await pollRepo.findOne({ pId: botAction.data });
+        let pollVotesRepo: Repositories.IPollVoteRepository = await this.getPollVoteRepository();
+        let existingVote: Entities.IPollVote = await pollVotesRepo.findOne({ user: userId, pId: poll.pId });
+        if (!!existingVote) {
+            return "";
+        }
+        try {
+            let optionId: number = parseInt(message.match(/\(([^)]+)\)/)[1]);
+            for (let i = 0; i < poll.options.length; i++) {
+                if (poll.options[i].id == optionId) {
+                    
+                    pollVotesRepo.create({
+                        pId: poll.pId,
+                        user: userId,
+                        voteOption: optionId
+                    });
+                }
+            }
+        } catch(err) {
+            console.log(err);
+            return await this.pollOptions(botAction, bot);
+        }
     }
 
     protected async addSubscriber(botDomain: Entities.IBot, subscriberId: string, subscriberName: string): Promise<boolean> {
@@ -200,5 +242,13 @@ export abstract class BaseBotService implements IBotService {
 
     protected getBotActionsRepository(): Repositories.IBotActionsRepository {
         return kernel.get<Repositories.IBotActionsRepository>(Types.IBotActionsRepository);
+    }
+
+    protected getPollRepository(): Repositories.IPollRepository {
+        return kernel.get<Repositories.IPollRepository>(Types.IPollRepository);
+    }
+
+    protected getPollVoteRepository(): Repositories.IPollVoteRepository {
+        return kernel.get<Repositories.IPollVoteRepository>(Types.IPollVoteRepository);
     }
 }

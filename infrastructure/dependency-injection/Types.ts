@@ -11,6 +11,7 @@ let Types = {
     IStorageService: Symbol("IStorageService"),
     IBotActionsRepository: Symbol("IBotActionsRepository"),
     IPollRepository: Symbol("IPollRepository"),
+    IPollVoteRepository: Symbol("IPollVoteRepository"),
 };
 
 export default Types;

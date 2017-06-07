@@ -6,3 +6,4 @@ export * from "./IEvent";
 export * from "./ISchedule";
 export * from "./IBotActions";
 export * from "./IPoll";
+export * from "./IPollVote";

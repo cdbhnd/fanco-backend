@@ -5,3 +5,4 @@ export * from "./Events";
 export * from "./Schedules";
 export * from "./BotActions";
 export * from "./Polls";
+export * from "./PollVotes";

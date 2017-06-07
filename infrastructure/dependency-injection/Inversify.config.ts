@@ -19,6 +19,7 @@ kernel.bind<Providers.IDropBoxProvider>(Types.IDropBoxProvider).to(Providers.Dro
 kernel.bind<Services.IStorageService>(Types.IStorageService).to(Services.StorageService);
 kernel.bind<Repositories.IBotActionsRepository>(Types.IBotActionsRepository).to(DB.BotActions);
 kernel.bind<Repositories.IPollRepository>(Types.IPollRepository).to(DB.Polls);
+kernel.bind<Repositories.IPollVoteRepository>(Types.IPollVoteRepository).to(DB.PollVotes);
 
 kernel.bind<Services.IBotService>(Types.IBotService).to(Services.ViberBotService).inSingletonScope().whenTargetNamed("viber");
 kernel.bind<Services.IBotService>(Types.IBotService).to(Services.FbMessengerService).inSingletonScope().whenTargetNamed("fbmessenger");
@@ -34,5 +35,6 @@ kernel.bind<string>("entityName").toConstantValue("events").whenInjectedInto(DB.
 kernel.bind<string>("entityName").toConstantValue("schedules").whenInjectedInto(DB.Schedules);
 kernel.bind<string>("entityName").toConstantValue("bot_actions").whenInjectedInto(DB.BotActions);
 kernel.bind<string>("entityName").toConstantValue("polls").whenInjectedInto(DB.Polls);
+kernel.bind<string>("entityName").toConstantValue("poll_votes").whenInjectedInto(DB.PollVotes);
 
 export default kernel;

@@ -1,9 +1,9 @@
-import { IPoll } from "../entities/IPoll";
+import { IPollVote } from "../entities/";
 
-export interface IPollRepository {
-    find(query: any): Promise<IPoll[]>;
-    create(entity: IPoll): Promise<IPoll>;
-    delete(entity: IPoll): Promise<boolean>;
-    findOne(query: any): Promise<IPoll>;
-    update(entity: IPoll): Promise<IPoll>
+export interface IPollVoteRepository {
+    find(query: any): Promise<IPollVote[]>;
+    create(entity: IPollVote): Promise<IPollVote>;
+    delete(entity: IPollVote): Promise<boolean>;
+    findOne(query: any): Promise<IPollVote>;
+    update(entity: IPollVote): Promise<IPollVote>
 }
