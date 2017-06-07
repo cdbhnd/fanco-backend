@@ -24,7 +24,7 @@ export class Action extends ActionBase<Entities.IPoll> {
         let poll: Entities.IPoll = await this.pollRepository.create({
             active: true,
             deadline: new Date(context.params.data.deadline).toISOString(),
-            oId: context.params.organization.id,
+            oId: context.params.organization.oId,
             options: context.params.data.options,
             pId: context.params.data.id
         });
