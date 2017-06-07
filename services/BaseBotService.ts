@@ -153,23 +153,23 @@ export abstract class BaseBotService implements IBotService {
     }
 
     public async pollVote(botAction: Entities.IAction, bot: Entities.IBot, message: string, userId: string): Promise<string> {
-        let pollRepo: Repositories.IPollRepository = await this.getPollRepository();
-        let poll: Entities.IPoll = await pollRepo.findOne({ pId: botAction.data });
-        let pollVotesRepo: Repositories.IPollVoteRepository = await this.getPollVoteRepository();
-        let existingVote: Entities.IPollVote = await pollVotesRepo.findOne({ user: userId, pId: poll.pId });
-        if (!!existingVote) {
-            return "";
-        }
         try {
+            let pollRepo: Repositories.IPollRepository = await this.getPollRepository();
+            let poll: Entities.IPoll = await pollRepo.findOne({ pId: botAction.data });
+            let pollVotesRepo: Repositories.IPollVoteRepository = await this.getPollVoteRepository();
+            let existingVote: Entities.IPollVote = await pollVotesRepo.findOne({ user: userId, pId: poll.pId });
+            if (!!existingVote) {
+                return "Nazalost, Vi ste vec glasali, ponovno glasanje nije moguce.";
+            }
             let optionId: number = parseInt(message.match(/\(([^)]+)\)/)[1]);
             for (let i = 0; i < poll.options.length; i++) {
                 if (poll.options[i].id == optionId) {
-                    
                     pollVotesRepo.create({
                         pId: poll.pId,
                         user: userId,
                         voteOption: optionId
                     });
+                    return "Hvala Vam na Vasem glasu";
                 }
             }
         } catch(err) {
