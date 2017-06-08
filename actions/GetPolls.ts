@@ -10,6 +10,7 @@ import { ActionContext } from "./ActionBase";
 
 export class Action extends ActionBase<Entities.IPoll[]> {
     private pollRepository: Repositories.IPollRepository;
+    private pollVoteRepostiory: Repositories.IPollVoteRepository;
     private organizationRepository: Repositories.IOrganizationRepository;
     private adminRepository: Repositories.IAdminUserRepository;
 
@@ -18,6 +19,7 @@ export class Action extends ActionBase<Entities.IPoll[]> {
         this.pollRepository = kernel.get<Repositories.IPollRepository>(Types.IPollRepository);
         this.organizationRepository = kernel.get<Repositories.IOrganizationRepository>(Types.IOrganizationRepository);
         this.adminRepository = kernel.get<Repositories.IAdminUserRepository>(Types.IAdminUserRepository);
+        this.pollVoteRepostiory = kernel.get<Repositories.IPollVoteRepository>(Types.IPollVoteRepository);
     };
 
     public async execute(context): Promise<Entities.IPoll[]> {
@@ -25,6 +27,12 @@ export class Action extends ActionBase<Entities.IPoll[]> {
         let polls: Entities.IPoll[] =  await this.pollRepository.find({
             oId: organization.oId,
         });
+        for (let i = 0; i < polls.length; i++) {
+            for (let j = 0; j < polls[i].options.length; j++) {
+                let pollVotes: Entities.IPollVote[] = await this.pollVoteRepostiory.find({ pId: polls[i].pId, voteOption: polls[i].options[j].id });
+                polls[i].options[j].votes = pollVotes.length;
+            }
+        }
         return polls;
     }
 

@@ -25,9 +25,10 @@ export class Action extends ActionBase<Entities.IPoll> {
         if (!poll) {
             throw new Exceptions.EntityNotFoundException("Poll", context.params.pollId);
         }
-        poll.active = context.params.active;
-        poll.deadline = context.params.deadline;
-        poll.options = context.params.options;
+        poll.active = context.params.data.active;
+        poll.deadline = new Date(context.params.data.deadline).toISOString();
+        poll.options = context.params.data.options;
+        poll.name = context.params.data.name;
         poll = await this.pollRepository.update(poll);
         return poll;
     }

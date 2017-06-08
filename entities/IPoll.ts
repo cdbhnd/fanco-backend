@@ -2,7 +2,8 @@ export interface IPoll {
     //id: string;
     pId: string;
     oId: string;
-    options: IPollOption[],
+    name: string;
+    options: IPollOption[];
     active: boolean;
     deadline: string;
 }
@@ -10,5 +11,5 @@ export interface IPoll {
 export interface IPollOption {
     id: number;
     name: string;
-    vote: number;
+    votes: number;
 }

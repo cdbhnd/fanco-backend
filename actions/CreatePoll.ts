@@ -26,7 +26,8 @@ export class Action extends ActionBase<Entities.IPoll> {
             deadline: new Date(context.params.data.deadline).toISOString(),
             oId: context.params.organization.oId,
             options: context.params.data.options,
-            pId: context.params.data.pId
+            pId: context.params.data.pId,
+            name: context.params.data.name
         });
         return poll;
     }
