@@ -153,9 +153,9 @@ export abstract class BaseBotService implements IBotService {
         }
         let pollOptions: string = "Opcije za glasanje: \n";
         for (let i = 0; i < poll.options.length; i++) {
-            pollOptions += "(" + poll.options[i].id + ") " + poll.options[i].name + "\n";
+            pollOptions += poll.options[i].id + ". " + poll.options[i].name + "\n";
         }
-        pollOptions += "Posaljite 'Glasanje (BROJ_OPCIJE)' da bi glasali za Vaseg favorita.";
+        pollOptions += "Posaljite 'Glasanje REDNI_BROJ_OPCIJE' da bi glasali za Vaseg favorita.";
         return pollOptions;
     }
 
@@ -177,7 +177,7 @@ export abstract class BaseBotService implements IBotService {
             if (!!existingVote) {
                 return "Nazalost, Vi ste vec glasali, ponovno glasanje nije moguce.";
             }
-            let optionId: number = parseInt(message.match(/\(([^)]+)\)/)[1]);
+            let optionId: number = parseInt(message.split(" ")[1]);// parseInt(message.match(/\(([^)]+)\)/)[1]);
             for (let i = 0; i < poll.options.length; i++) {
                 if (poll.options[i].id == optionId) {
                     pollVotesRepo.create({
@@ -210,7 +210,7 @@ export abstract class BaseBotService implements IBotService {
         let pollResults: string = "Trenutni rezultat: \n";
         for (let i = 0; i < poll.options.length; i++) {
             let results:Entities.IPollVote[] = await pollVotesRepo.find({ pId: poll.pId, voteOption: poll.options[i].id });
-            pollResults += "(" + poll.options[i].id + ") " + poll.options[i].name + ":" + results.length + " glasova \n";
+            pollResults += poll.options[i].id + ". " + poll.options[i].name + ":" + results.length + " glasova \n";
         }
         return pollResults;
     }
