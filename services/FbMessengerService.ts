@@ -86,16 +86,34 @@ export class FbMessengerService extends BaseBotService {
                 if (!action) {
                     continue;
                 }
+                console.log(message.text);
                 if (message.text.match(new RegExp(botAction.keywords, "i"))) {
                     console.log("Facebook messenger: " + botAction.keywords + " has been captured");
+                    console.log(sender);
                     let answer: string = await this[action](botAction, domainBot, message.text, sender.id, sender.first_name);
-                    const out = new Elements();
-                    if (botAction.responseType == "image") {
-                        out.add({ image: answer });
+                    if (answer.length > 640) {
+                        let lines: string[] = answer.split("\n");
+                        let goodAnswer:string = "";
+                        for (let j = 0; j < lines.length; j++) {
+                            goodAnswer += lines[j] + "\n";
+                            if ((j != 0 && (j % 6) == 0) || (j == (lines.length - 1))) {
+                                const out = new Elements();
+                                out.add({ text: goodAnswer });
+                                await bot.send(sender.id, out);
+                                goodAnswer = "";
+                            }
+                        }
                     } else {
-                        out.add({ text: answer });
+                        console.log("Facebook messenger: " + answer);
+                        const out = new Elements();
+                        if (botAction.responseType == "image") {
+                            out.add({ image: answer });
+                        } else {
+                            out.add({ text: answer });
+                        }
+                        bot.send(sender.id, out);
                     }
-                    bot.send(sender.id, out);                    
+                                        
                 }
             }
         });

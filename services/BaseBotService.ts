@@ -139,7 +139,7 @@ export abstract class BaseBotService implements IBotService {
         return `Farewell ${userName}. I ll be waiting for you to come back`;
     }
 
-    public async pollOptions(botAction: Entities.IAction, bot: Entities.IBot): Promise<string> {
+    public async pollOptions(botAction: Entities.IAction, bot: Entities.IBot, message: string, userId: string, userName: string): Promise<string> {
         let pollRepo: Repositories.IPollRepository = await this.getPollRepository();
         let poll: Entities.IPoll = await pollRepo.findOne({ pId: botAction.data });
         if (!poll) {
@@ -151,15 +151,16 @@ export abstract class BaseBotService implements IBotService {
         if (new Date(poll.deadline) < new Date()) {
             return "Nazalost, vreme za glasanje je isteklo";
         }
-        let pollOptions: string = "Opcije za glasanje: \n";
+        let pollOptions: string = "Tim: \n";
         for (let i = 0; i < poll.options.length; i++) {
             pollOptions += poll.options[i].id + ". " + poll.options[i].name + "\n";
         }
-        pollOptions += "Posaljite 'Glasanje REDNI_BROJ_OPCIJE' da bi glasali za Vaseg favorita.";
+        pollOptions += "Posaljite 'Glasanje REDNI_BROJ_OPCIJE' da bi glasali za vašeg favorita. Na primer, da biste glasali za " + poll.options[1].name + " posaljite 'Glasanje 2'.";
+        this.addSubscriber(bot, userId, userName);
         return pollOptions;
     }
 
-    public async pollVote(botAction: Entities.IAction, bot: Entities.IBot, message: string, userId: string): Promise<string> {
+    public async pollVote(botAction: Entities.IAction, bot: Entities.IBot, message: string, userId: string, userName: string): Promise<string> {
         try {
             let pollRepo: Repositories.IPollRepository = await this.getPollRepository();
             let poll: Entities.IPoll = await pollRepo.findOne({ pId: botAction.data });
@@ -175,7 +176,7 @@ export abstract class BaseBotService implements IBotService {
             let pollVotesRepo: Repositories.IPollVoteRepository = await this.getPollVoteRepository();
             let existingVote: Entities.IPollVote = await pollVotesRepo.findOne({ user: userId, pId: poll.pId });
             if (!!existingVote) {
-                return "Nazalost, Vi ste vec glasali, ponovno glasanje nije moguce.";
+                return "Već ste glasali :)";
             }
             let optionId: number = parseInt(message.split(" ")[1]);// parseInt(message.match(/\(([^)]+)\)/)[1]);
             for (let i = 0; i < poll.options.length; i++) {
@@ -185,12 +186,12 @@ export abstract class BaseBotService implements IBotService {
                         user: userId,
                         voteOption: optionId
                     });
-                    return "Hvala Vam na Vasem glasu";
+                    return "Hvala Vam na Vašem glasu!";
                 }
             }
         } catch(err) {
             console.log(err);
-            return await this.pollOptions(botAction, bot);
+            return await this.pollOptions(botAction, bot, message, userId, userName);
         }
     }
 
