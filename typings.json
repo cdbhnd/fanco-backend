@@ -17,6 +17,7 @@
     "body-parser": "registry:npm/body-parser#1.15.2+20161116154925",
     "debug": "registry:npm/debug#2.0.0+20160723033700",
     "jwt-simple": "registry:dt/jwt-simple#0.5.0+20160727002439",
+    "multer": "registry:dt/multer#0.0.0+20170119150739",
     "request": "registry:npm/request#2.69.0+20160428223725"
   }
 }

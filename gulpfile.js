@@ -4,7 +4,7 @@ var clean = require('gulp-clean');
 var gulpSequence = require('gulp-sequence');
 var tslint = require("gulp-tslint");
 
-gulp.task('default', gulpSequence('tslint', 'clean', 'compile', 'copy', 'copy-assets'));
+gulp.task('default', gulpSequence('clean', 'compile', 'copy', 'copy-assets'));
 
 gulp.task('tslint', function () {
     return gulp.src(['./**/*.ts', '!./node_modules/**', '!./typings/**'])

@@ -1,6 +1,7 @@
 import { DB } from "./DB";
 import * as mongodb from "mongodb";
 import { injectable } from "inversify";
+import * as config from "config";
 
 @injectable()
 export class BaseRepository<T> {
@@ -8,7 +9,7 @@ export class BaseRepository<T> {
     private entityName: string;
 
     constructor(entityName: string) {
-        DB.init();
+        // DB.init();
         this.entityName = entityName;
         this.db = DB.db;
     }
