@@ -4,3 +4,6 @@ export * from "./AdminUser";
 export * from "./Bot";
 export * from "./IEvent";
 export * from "./ISchedule";
+export * from "./IBotActions";
+export * from "./IPoll";
+export * from "./IPollVote";

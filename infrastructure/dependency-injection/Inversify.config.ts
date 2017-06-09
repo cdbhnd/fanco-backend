@@ -2,7 +2,6 @@ import { Kernel } from "inversify";
 import Types from "./Types";
 import * as Repositories from "../../repositories/index";
 import * as Services from "../../services/index";
-// import * as Providers from "../../providers/index";
 import * as DB from "../../database/index";
 import * as actions from "../../actions";
 import {Logger} from "../logger/Logger";
@@ -18,6 +17,9 @@ kernel.bind<Repositories.IEventRepository>(Types.IEventRepository).to(DB.Events)
 kernel.bind<Repositories.IScheduleRepository>(Types.IScheduleRepository).to(DB.Schedules);
 kernel.bind<Providers.IDropBoxProvider>(Types.IDropBoxProvider).to(Providers.DropBoxProvider);
 kernel.bind<Services.IStorageService>(Types.IStorageService).to(Services.StorageService);
+kernel.bind<Repositories.IBotActionsRepository>(Types.IBotActionsRepository).to(DB.BotActions);
+kernel.bind<Repositories.IPollRepository>(Types.IPollRepository).to(DB.Polls);
+kernel.bind<Repositories.IPollVoteRepository>(Types.IPollVoteRepository).to(DB.PollVotes);
 
 kernel.bind<Services.IBotService>(Types.IBotService).to(Services.ViberBotService).inSingletonScope().whenTargetNamed("viber");
 kernel.bind<Services.IBotService>(Types.IBotService).to(Services.FbMessengerService).inSingletonScope().whenTargetNamed("fbmessenger");
@@ -31,5 +33,8 @@ kernel.bind<string>("entityName").toConstantValue("organizations").whenInjectedI
 kernel.bind<string>("entityName").toConstantValue("bots").whenInjectedInto(DB.Bots);
 kernel.bind<string>("entityName").toConstantValue("events").whenInjectedInto(DB.Events);
 kernel.bind<string>("entityName").toConstantValue("schedules").whenInjectedInto(DB.Schedules);
+kernel.bind<string>("entityName").toConstantValue("bot_actions").whenInjectedInto(DB.BotActions);
+kernel.bind<string>("entityName").toConstantValue("polls").whenInjectedInto(DB.Polls);
+kernel.bind<string>("entityName").toConstantValue("poll_votes").whenInjectedInto(DB.PollVotes);
 
 export default kernel;
